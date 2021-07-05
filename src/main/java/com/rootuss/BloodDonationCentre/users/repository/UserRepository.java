@@ -1,7 +1,7 @@
-package com.rootuss.BloodDonationCentre.repository;
+package com.rootuss.BloodDonationCentre.users.repository;
 
 
-import com.rootuss.BloodDonationCentre.models.User;
+import com.rootuss.BloodDonationCentre.users.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

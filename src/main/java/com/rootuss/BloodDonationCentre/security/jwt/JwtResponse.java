@@ -1,7 +1,4 @@
-package com.rootuss.BloodDonationCentre.payload.response;
-
-import lombok.Getter;
-import lombok.Setter;
+package com.rootuss.BloodDonationCentre.security.jwt;
 
 import java.util.List;
 

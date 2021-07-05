@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class BloodDonationCentreApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(BloodDonationCentreApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(BloodDonationCentreApplication.class, args);
+    }
 
 }

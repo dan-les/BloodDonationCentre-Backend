@@ -1,5 +1,6 @@
-package com.rootuss.BloodDonationCentre.models;
+package com.rootuss.BloodDonationCentre.users.model;
 
+import com.rootuss.BloodDonationCentre.roles.model.Role;
 import lombok.Getter;
 import lombok.Setter;
 

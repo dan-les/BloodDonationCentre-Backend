@@ -1,17 +1,17 @@
-package com.rootuss.BloodDonationCentre.controllers;
+package com.rootuss.BloodDonationCentre.users.controller;
 
 
-import com.rootuss.BloodDonationCentre.models.ERole;
-import com.rootuss.BloodDonationCentre.models.Role;
-import com.rootuss.BloodDonationCentre.models.User;
-import com.rootuss.BloodDonationCentre.payload.request.LoginRequest;
-import com.rootuss.BloodDonationCentre.payload.request.SignupRequest;
-import com.rootuss.BloodDonationCentre.payload.response.JwtResponse;
-import com.rootuss.BloodDonationCentre.payload.response.MessageResponse;
-import com.rootuss.BloodDonationCentre.repository.RoleRepository;
-import com.rootuss.BloodDonationCentre.repository.UserRepository;
+import com.rootuss.BloodDonationCentre.roles.model.ERole;
+import com.rootuss.BloodDonationCentre.roles.model.Role;
+import com.rootuss.BloodDonationCentre.roles.repository.RoleRepository;
+import com.rootuss.BloodDonationCentre.security.jwt.JwtResponse;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.services.UserDetailsImpl;
+import com.rootuss.BloodDonationCentre.users.model.LoginRequest;
+import com.rootuss.BloodDonationCentre.users.model.MessageResponse;
+import com.rootuss.BloodDonationCentre.users.model.SignupRequest;
+import com.rootuss.BloodDonationCentre.users.model.User;
+import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;

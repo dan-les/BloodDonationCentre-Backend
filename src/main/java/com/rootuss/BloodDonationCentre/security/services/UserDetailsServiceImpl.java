@@ -1,7 +1,7 @@
 package com.rootuss.BloodDonationCentre.security.services;
 
-import com.rootuss.BloodDonationCentre.models.User;
-import com.rootuss.BloodDonationCentre.repository.UserRepository;
+import com.rootuss.BloodDonationCentre.users.model.User;
+import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

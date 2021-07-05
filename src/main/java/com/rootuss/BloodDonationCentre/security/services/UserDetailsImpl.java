@@ -1,7 +1,7 @@
 package com.rootuss.BloodDonationCentre.security.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.rootuss.BloodDonationCentre.models.User;
+import com.rootuss.BloodDonationCentre.users.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
