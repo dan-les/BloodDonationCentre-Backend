@@ -1,6 +1,6 @@
-package com.rootuss.BloodDonationCentre.donors;
+package com.rootuss.BloodDonationCentre.donors.repository;
 
-import org.springframework.data.domain.Pageable;
+import com.rootuss.BloodDonationCentre.donors.model.Donor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

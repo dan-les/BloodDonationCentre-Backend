@@ -1,5 +1,7 @@
-package com.rootuss.BloodDonationCentre.donors;
+package com.rootuss.BloodDonationCentre.donors.controller;
 
+import com.rootuss.BloodDonationCentre.donors.model.DonorResponseDto;
+import com.rootuss.BloodDonationCentre.donors.service.DonorService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,7 +19,7 @@ public class DonorController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")
-    public List<Donor> getReservation() {
+    public List<DonorResponseDto> getReservation() {
         return donorService.getAllDonors();
     }
 

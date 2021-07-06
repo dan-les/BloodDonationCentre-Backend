@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.donors;
+package com.rootuss.BloodDonationCentre.donors.model;
 
 import com.rootuss.BloodDonationCentre.blood.Blood;
 import lombok.Data;
