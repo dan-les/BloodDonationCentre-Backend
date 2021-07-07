@@ -1,5 +1,7 @@
 package com.rootuss.BloodDonationCentre.donors.service;
 
+import com.rootuss.BloodDonationCentre.donors.model.Donor;
+import com.rootuss.BloodDonationCentre.donors.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.donors.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.donors.repository.DonorRepository;
 import com.rootuss.BloodDonationCentre.donors.util.DonorMapper;
@@ -21,5 +23,13 @@ public class DonorServiceImpl implements DonorService {
                 .stream()
                 .map(donorMapper::mapToDonorResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public DonorResponseDto addDonor(DonorRequestDto donorRequestDto) {
+        Donor donor = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
+
+        donorRepository.save(donor);
+        return donorMapper.mapToDonorResponseDto(donor);
     }
 }
