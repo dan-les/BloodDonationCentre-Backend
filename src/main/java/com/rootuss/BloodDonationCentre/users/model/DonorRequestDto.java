@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.donors.model;
+package com.rootuss.BloodDonationCentre.users.model;
 
 import lombok.Getter;
 

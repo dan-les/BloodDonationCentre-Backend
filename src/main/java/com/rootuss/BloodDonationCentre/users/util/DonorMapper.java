@@ -1,0 +1,59 @@
+package com.rootuss.BloodDonationCentre.users.util;
+
+import com.rootuss.BloodDonationCentre.blood.Blood;
+import com.rootuss.BloodDonationCentre.blood.BloodRepository;
+import com.rootuss.BloodDonationCentre.blood.EBlood;
+import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
+import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
+import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
+import com.rootuss.BloodDonationCentre.users.model.User;
+import lombok.AllArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+
+
+@Component
+@AllArgsConstructor
+public class DonorMapper {
+
+
+    BloodRepository bloodRepository;
+
+    public DonorResponseDto mapToDonorResponseDto(User user) {
+
+        return DonorResponseDto.builder()
+                .id(user.getId())
+                .username(user.getUsername() == null ? "-" : user.getUsername())
+                .email(user.getEmail() == null ? "-" : user.getEmail())
+                .firstName(user.getFirstName() == null ? "-" : user.getFirstName())
+                .lastName(user.getLastName() == null ? "-" : user.getLastName())
+                .pesel(user.getPesel() == null ? "-" : user.getPesel())
+                .bloodGroupWithRh(user.getBlood() == null ? "-" : user.getBlood().getName().getName())
+                .build();
+    }
+
+    public User mapDonorRequestDtoToDonor(DonorRequestDto donorRequestDto) {
+        User user = new User();
+        user.setFirstName(donorRequestDto.getFirstName());
+        user.setLastName(donorRequestDto.getLastName());
+        user.setPesel(donorRequestDto.getPesel());
+        user.setBlood(getBloodGroupFromDonorRequestDto(donorRequestDto));
+        return user;
+    }
+
+    private Blood getBloodGroupFromDonorRequestDto(DonorRequestDto donorRequestDto) {
+
+        var bloodName = donorRequestDto.getBloodGroupWithRh();
+        var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getName().equals(bloodName)).findFirst()
+                .orElseThrow(() -> new BloodDonationCentreException(Error.BLOOD_TYPE_NOT_FOUND));
+
+
+        return bloodRepository.findByName(bloodNameEnum)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new BloodDonationCentreException(Error.BLOOD_TYPE_NOT_FOUND));
+    }
+}
+
