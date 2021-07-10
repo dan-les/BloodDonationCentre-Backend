@@ -8,7 +8,7 @@ import com.rootuss.BloodDonationCentre.security.jwt.JwtResponse;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.services.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequest;
-import com.rootuss.BloodDonationCentre.users.model.MessageResponse;
+import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import com.rootuss.BloodDonationCentre.users.model.SignupRequest;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;

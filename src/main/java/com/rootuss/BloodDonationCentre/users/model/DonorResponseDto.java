@@ -13,4 +13,5 @@ public class DonorResponseDto {
     private String lastName;
     private String pesel;
     private String bloodGroupWithRh;
+    private String gender;
 }

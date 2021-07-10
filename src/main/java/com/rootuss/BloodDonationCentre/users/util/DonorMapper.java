@@ -25,12 +25,13 @@ public class DonorMapper {
 
         return DonorResponseDto.builder()
                 .id(user.getId())
-                .username(user.getUsername() == null ? "-" : user.getUsername())
-                .email(user.getEmail() == null ? "-" : user.getEmail())
-                .firstName(user.getFirstName() == null ? "-" : user.getFirstName())
-                .lastName(user.getLastName() == null ? "-" : user.getLastName())
-                .pesel(user.getPesel() == null ? "-" : user.getPesel())
-                .bloodGroupWithRh(user.getBlood() == null ? "-" : user.getBlood().getName().getName())
+                .username(user.getUsername() == null ? "" : user.getUsername())
+                .email(user.getEmail() == null ? "" : user.getEmail())
+                .firstName(user.getFirstName() == null ? "" : user.getFirstName())
+                .lastName(user.getLastName() == null ? "" : user.getLastName())
+                .pesel(user.getPesel() == null ? "" : user.getPesel())
+                .bloodGroupWithRh(user.getBlood() == null ? "" : user.getBlood().getName().getName())
+                .gender(user.getGender() == null ? "" : user.getGender())
                 .build();
     }
 
@@ -40,6 +41,9 @@ public class DonorMapper {
         user.setLastName(donorRequestDto.getLastName());
         user.setPesel(donorRequestDto.getPesel());
         user.setBlood(getBloodGroupFromDonorRequestDto(donorRequestDto));
+        user.setEmail(donorRequestDto.getEmail());
+        user.setUsername(donorRequestDto.getUsername());
+        user.setGender(donorRequestDto.getGender());
         return user;
     }
 

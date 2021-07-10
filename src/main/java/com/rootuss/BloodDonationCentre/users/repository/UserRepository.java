@@ -22,4 +22,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT distinct u FROM User u JOIN u.roles r WHERE r.name =:roleName")
     List<User> findAllDonors(ERole roleName);
+
+    void deleteById(Long id);
 }

@@ -1,5 +1,7 @@
 package com.rootuss.BloodDonationCentre.users.service;
 
+import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
+import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
@@ -29,18 +31,46 @@ public class DonorServiceImpl implements DonorService {
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public DonorResponseDto addDonor(DonorRequestDto donorRequestDto) {
-        User user = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
-
-        userRepository.save(user);
-        return donorMapper.mapToDonorResponseDto(user);
-    }
+//    @Override
+//    public DonorResponseDto addDonor(DonorRequestDto donorRequestDto) {
+//        User user = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
+//
+//        userRepository.save(user);
+//        return donorMapper.mapToDonorResponseDto(user);
+//    }
 
     @Override
     @Transactional
     public Optional<DonorResponseDto> loadUserById(Long Id) throws UsernameNotFoundException {
-        return Optional.ofNullable(userRepository.findById(Id)).orElseThrow()
+        return Optional.ofNullable(userRepository.findById(Id))
+                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND))
                 .map(donorMapper::mapToDonorResponseDto);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        userRepository.findById(id)
+                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
+        userRepository.deleteById(id);
+    }
+
+    @Override
+    public DonorResponseDto putDonor(Long id, DonorRequestDto donorRequestDto) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
+
+        User userRequest = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
+
+        user.setUsername(userRequest.getUsername());
+        user.setFirstName(userRequest.getFirstName());
+        user.setLastName(userRequest.getLastName());
+        user.setBlood(userRequest.getBlood());
+        user.setEmail(userRequest.getEmail());
+        user.setPesel(userRequest.getPesel());
+
+
+        user = userRepository.saveAndFlush(user);
+
+        return donorMapper.mapToDonorResponseDto(user);
     }
 }
