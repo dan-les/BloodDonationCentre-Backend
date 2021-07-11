@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.blood;
+package com.rootuss.BloodDonationCentre.blood.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -15,5 +15,5 @@ public enum EBlood {
     GROUP_0_RH_PLUS("0 Rh+"),
     GROUP_0_RH_MINUS("0 Rh-");
 
-    String name;
+    String stringName;
 }

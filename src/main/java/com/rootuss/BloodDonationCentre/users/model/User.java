@@ -1,7 +1,7 @@
 package com.rootuss.BloodDonationCentre.users.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.rootuss.BloodDonationCentre.blood.Blood;
+import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
 import lombok.Getter;
 import lombok.Setter;

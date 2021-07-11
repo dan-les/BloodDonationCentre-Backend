@@ -1,5 +1,8 @@
-package com.rootuss.BloodDonationCentre.blood;
+package com.rootuss.BloodDonationCentre.blood.controller;
 
+import com.rootuss.BloodDonationCentre.blood.model.Blood;
+import com.rootuss.BloodDonationCentre.blood.repository.BloodRepository;
+import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

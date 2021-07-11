@@ -1,8 +1,8 @@
 package com.rootuss.BloodDonationCentre.users.util;
 
-import com.rootuss.BloodDonationCentre.blood.Blood;
-import com.rootuss.BloodDonationCentre.blood.BloodRepository;
-import com.rootuss.BloodDonationCentre.blood.EBlood;
+import com.rootuss.BloodDonationCentre.blood.model.Blood;
+import com.rootuss.BloodDonationCentre.blood.repository.BloodRepository;
+import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
@@ -30,7 +30,7 @@ public class DonorMapper {
                 .firstName(user.getFirstName() == null ? "" : user.getFirstName())
                 .lastName(user.getLastName() == null ? "" : user.getLastName())
                 .pesel(user.getPesel() == null ? "" : user.getPesel())
-                .bloodGroupWithRh(user.getBlood() == null ? "" : user.getBlood().getName().getName())
+                .bloodGroupWithRh(user.getBlood() == null ? "" : user.getBlood().getName().getStringName())
                 .gender(user.getGender() == null ? "" : user.getGender())
                 .build();
     }
@@ -50,7 +50,7 @@ public class DonorMapper {
     private Blood getBloodGroupFromDonorRequestDto(DonorRequestDto donorRequestDto) {
 
         var bloodName = donorRequestDto.getBloodGroupWithRh();
-        var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getName().equals(bloodName)).findFirst()
+        var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getStringName().equals(bloodName)).findFirst()
                 .orElseThrow(() -> new BloodDonationCentreException(Error.BLOOD_TYPE_NOT_FOUND));
 
 
