@@ -2,9 +2,9 @@ package com.rootuss.BloodDonationCentre.donation.service;
 
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
+import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 
@@ -19,6 +19,5 @@ public interface DonationService {
 
     DonorResponseDto putDonation(Long id, DonationRequestDto donorRequestDto);
 
-    LocalDate getSoonestPossibleDateForNextDonation();
-
+    NextDonationResponseDto getSoonestPossibleDateForNextDonation(String donationType, Long donorId);
 }

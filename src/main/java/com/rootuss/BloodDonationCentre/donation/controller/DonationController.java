@@ -2,7 +2,8 @@ package com.rootuss.BloodDonationCentre.donation.controller;
 
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.NextDonationParams;
+import com.rootuss.BloodDonationCentre.donation.model.NextDonationRequestDto;
+import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -30,10 +31,11 @@ public class DonationController {
         }
     }
 
+    @GetMapping("/next")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public LocalDate getSoonestPossibleDateForNextDonation(@RequestBody NextDonationParams nextDonationParams) {
+    public NextDonationResponseDto getSoonestPossibleDateForNextDonation(@RequestParam Long donorId, String donationType) {
         //albo zwracać rok, miesiąc dzień
-        return donationService.getSoonestPossibleDateForNextDonation();
+        return donationService.getSoonestPossibleDateForNextDonation(donationType, donorId);
 
     }
 
