@@ -1,13 +1,15 @@
 package com.rootuss.BloodDonationCentre.reservation.controller;
 
-import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
+import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
+import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.service.ReservationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -23,7 +25,8 @@ public class ReservationController {
     public List<HoursResponseDto> getHoursWithAvailability(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return reservationService.getHoursWithAvailability(date);
     }
-//
+
+    //
 //    @GetMapping("/next")
 //    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
 //    public NextDonationResponseDto getSoonestPossibleDateForNextDonation(@RequestParam Long donorId, String donationType) {
@@ -32,11 +35,23 @@ public class ReservationController {
 //
 //    }
 //
-//    @PreAuthorize("hasRole('STAFF')")
-//    @PostMapping
-//    public DonationResponseDto addDonation(@RequestBody DonationRequestDto donationRequestDto) {
-//        return donationService.addDonation(donationRequestDto);
-//    }
+    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
+    @PostMapping
+    public ReservationResponseDto addReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto) {
+        return reservationService.addReservation(reservationRequestDto);
+    }
+
+    @GetMapping("/list")
+    @PreAuthorize("hasRole('STAFF')")
+    public List<ReservationResponseDto> getReservations(@RequestParam(required = false)
+                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        if (date != null) {
+            return reservationService.getAllReservationsByDate(date);
+        } else {
+            return reservationService.getAllReservations();
+        }
+    }
+
 //
 //    @PreAuthorize("hasRole('STAFF')")
 //    @PutMapping(value = "/{id}")

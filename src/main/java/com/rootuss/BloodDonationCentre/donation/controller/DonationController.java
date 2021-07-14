@@ -2,7 +2,6 @@ package com.rootuss.BloodDonationCentre.donation.controller;
 
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.NextDonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
@@ -11,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.time.LocalDate;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)

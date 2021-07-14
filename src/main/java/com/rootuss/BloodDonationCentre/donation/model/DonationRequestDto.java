@@ -10,4 +10,5 @@ public class DonationRequestDto {
     private String donorId;
     @NotNull(message = "Type of donation can not be blank")
     private String donationType;
+
 }

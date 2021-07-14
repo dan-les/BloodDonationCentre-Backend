@@ -47,7 +47,7 @@ public class DonorController {
     @PreAuthorize("hasRole('STAFF')")
     @PutMapping(value = "/{id}")
     public DonorResponseDto putDonor(@PathVariable Long id,
-                                                 @RequestBody @Valid DonorRequestDto donorRequestDto) {
+                                     @RequestBody @Valid DonorRequestDto donorRequestDto) {
 
         return donorService.putDonor(id, donorRequestDto);
     }

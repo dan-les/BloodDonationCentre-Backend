@@ -1,5 +1,6 @@
 package com.rootuss.BloodDonationCentre.reservation.model;
 
+import com.rootuss.BloodDonationCentre.donation.model.EDonationType;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import lombok.Data;
 
@@ -19,4 +20,7 @@ public class Reservation {
     private User user;
     private LocalDate date;
     private LocalTime time;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "donation_type")
+    private EDonationType donationType;
 }
