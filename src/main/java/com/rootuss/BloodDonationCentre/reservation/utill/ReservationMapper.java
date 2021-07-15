@@ -43,6 +43,7 @@ public class ReservationMapper {
                 .id(reservation.getId())
                 .date(reservation.getDate().toString())
                 .time(reservation.getTime().toString())
+                .donorId(reservation.getUser().getId())
                 .donorFirstName(reservation.getUser().getFirstName())
                 .donorLastName(reservation.getUser().getLastName())
                 .pesel(reservation.getUser().getPesel())

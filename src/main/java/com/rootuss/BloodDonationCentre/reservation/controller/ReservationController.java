@@ -4,6 +4,7 @@ import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.service.ReservationService;
+import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,7 +53,21 @@ public class ReservationController {
         }
     }
 
-//
+    @PreAuthorize("hasRole('STAFF')")
+    @DeleteMapping(value = "/{id}")
+    public MessageResponse deleteReservation(@PathVariable Long id) {
+        reservationService.deleteById(id);
+        return new MessageResponse("Reservation delete successfully");
+    }
+
+    @PreAuthorize("hasRole('STAFF')")
+    @GetMapping(value = "/{id}")
+    public ReservationResponseDto putDonation(@PathVariable Long id) {
+
+        return reservationService.getReservationById(id);
+    }
+
+
 //    @PreAuthorize("hasRole('STAFF')")
 //    @PutMapping(value = "/{id}")
 //    public DonorResponseDto putDonation(@PathVariable Long id,

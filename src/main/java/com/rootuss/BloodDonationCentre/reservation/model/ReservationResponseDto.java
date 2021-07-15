@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class ReservationResponseDto {
     private Long id;
+    private Long donorId;
     private String donorFirstName;
     private String donorLastName;
     private String pesel;

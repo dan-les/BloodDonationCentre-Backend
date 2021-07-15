@@ -4,6 +4,7 @@ import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
+import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class DonationServiceImpl implements DonationService {
     private final DonationRepository donationRepository;
     private final UserRepository userRepository;
+    private final DonationMapper donationMapper;
 
     @Override
     public List<DonationResponseDto> getDonationsByDonorId(String donorId) {
@@ -35,7 +37,9 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public DonationResponseDto addDonation(DonationRequestDto donationRequestDto) {
-        return null;
+        var donation = donationMapper.mapDonationRequestDtoToDonation(donationRequestDto);
+        donation = donationRepository.save(donation);
+        return donationMapper.mapToDonationResponseDto(donation);
     }
 
     @Override

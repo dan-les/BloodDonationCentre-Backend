@@ -2,7 +2,12 @@ package com.rootuss.BloodDonationCentre.donation.utill;
 
 import com.rootuss.BloodDonationCentre.donation.model.Donation;
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
-import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
+import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
+import com.rootuss.BloodDonationCentre.donation.model.EDonationType;
+import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
+import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
+import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +15,10 @@ import org.springframework.stereotype.Component;
 @Component
 @AllArgsConstructor
 public class DonationMapper {
+    private final UserRepository userRepository;
+    private final RecipientRepository recipientRepository;
 
-
-    public DonorResponseDto mapToDonationResponseDto(Donation donation) {
+    public DonationResponseDto mapToDonationResponseDto(Donation donation) {
 
 //        return DonorResponseDto.builder()
 //                .id(user.getId())
@@ -28,16 +34,21 @@ public class DonationMapper {
     }
 
     public Donation mapDonationRequestDtoToDonation(DonationRequestDto donationRequestDto) {
-//        User user = new User();
-//        user.setFirstName(donorRequestDto.getFirstName());
-//        user.setLastName(donorRequestDto.getLastName());
-//        user.setPesel(donorRequestDto.getPesel());
-//        user.setBlood(getBloodGroupFromDonorRequestDto(donorRequestDto));
-//        user.setEmail(donorRequestDto.getEmail());
-//        user.setUsername(donorRequestDto.getUsername());
-//        user.setGender(donorRequestDto.getGender());
-//        return user;
-        return null;
+        Donation donation = new Donation();
+        donation.setAmount(donationRequestDto.getAmount());
+        donation.setDate(donationRequestDto.getDate());
+        donation.setIsReleased(donationRequestDto.getIsReleased());
+        donation.setDonationType(donationRequestDto.getDonationType().equals("plasma") ?
+                EDonationType.PLASMA : EDonationType.BLOOD);
+        donation.setRecipient(
+                donationRequestDto.getRecipientId() == null ?
+                        null : recipientRepository.findById(donationRequestDto.getRecipientId())
+                        .orElseThrow(() -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
+        donation.setUser(
+                userRepository.findById(donationRequestDto.getDonorId())
+                        .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND)));
+
+        return donation;
     }
 
 

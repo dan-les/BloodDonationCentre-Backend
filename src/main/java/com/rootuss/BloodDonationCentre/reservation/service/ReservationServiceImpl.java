@@ -1,5 +1,7 @@
 package com.rootuss.BloodDonationCentre.reservation.service;
 
+import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
+import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
@@ -60,5 +62,17 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findAllByDate(date).stream()
                 .map(reservationMapper::mapToReservationResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        reservationRepository.deleteById(id);
+    }
+
+    @Override
+    public ReservationResponseDto getReservationById(Long id) {
+        Reservation reservation = reservationRepository.findById(id).orElseThrow(
+                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
+        return reservationMapper.mapToReservationResponseDto(reservation);
     }
 }

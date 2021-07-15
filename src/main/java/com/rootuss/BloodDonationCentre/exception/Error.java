@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 @AllArgsConstructor
 public enum Error {
 
-    BLOOD_TYPE_NOT_FOUND("Blood type not found", HttpStatus.BAD_REQUEST),
-    USER_DONOR_NOT_FOUND("USER type not found", HttpStatus.BAD_REQUEST);
+    BLOOD_TYPE_NOT_FOUND("Blood type not found", HttpStatus.NOT_FOUND),
+    USER_DONOR_NOT_FOUND("USER type not found", HttpStatus.NOT_FOUND),
+    RESERVATION_NOT_FOUND("Reservation not found", HttpStatus.NOT_FOUND),
+    RECIPIENT_NOT_FOUND("Recipient not found", HttpStatus.NOT_FOUND);
 //    BAD_REQUEST(null, HttpStatus.BAD_REQUEST),
 //    UNAUTHORIZED_REQUEST(null, HttpStatus.UNAUTHORIZED),
 //    BAD_LOGIN_CREDENTIALS("Bad login credentials", HttpStatus.UNAUTHORIZED),
