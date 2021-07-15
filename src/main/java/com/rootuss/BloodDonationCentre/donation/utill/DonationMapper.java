@@ -40,13 +40,9 @@ public class DonationMapper {
         donation.setIsReleased(donationRequestDto.getIsReleased());
         donation.setDonationType(donationRequestDto.getDonationType().equals("plasma") ?
                 EDonationType.PLASMA : EDonationType.BLOOD);
-        donation.setRecipient(
-                donationRequestDto.getRecipientId() == null ?
-                        null : recipientRepository.findById(donationRequestDto.getRecipientId())
-                        .orElseThrow(() -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
-        donation.setUser(
-                userRepository.findById(donationRequestDto.getDonorId())
-                        .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND)));
+        donation.setRecipient(recipientRepository.findById(donationRequestDto.getRecipientId()).orElse(null));
+        donation.setUser(userRepository.findById(donationRequestDto.getDonorId())
+                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND)));
 
         return donation;
     }
