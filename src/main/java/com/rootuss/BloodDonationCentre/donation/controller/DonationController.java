@@ -21,7 +21,7 @@ public class DonationController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public List<DonationResponseDto> getDonations(@RequestParam(required = false) String donorId) {
+    public List<DonationResponseDto> getDonations(@RequestParam(required = false) Long donorId) {
         if (donorId != null) {
             return donationService.getDonationsByDonorId(donorId);
         } else {

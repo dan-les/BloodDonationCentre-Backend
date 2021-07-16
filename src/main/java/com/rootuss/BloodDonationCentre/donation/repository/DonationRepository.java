@@ -17,4 +17,9 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
 
     @Query("SELECT d FROM Donation d WHERE d.user = :user ORDER BY d.date DESC")
     List<Donation> findByUser(Optional<User> user);
+
+    @Query("SELECT d FROM Donation d WHERE d.user.id = :userId ORDER BY d.date DESC")
+    List<Donation> findByAllUserId(Long userId);
+
+
 }

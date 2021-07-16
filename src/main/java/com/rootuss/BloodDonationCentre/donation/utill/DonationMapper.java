@@ -19,18 +19,18 @@ public class DonationMapper {
     private final RecipientRepository recipientRepository;
 
     public DonationResponseDto mapToDonationResponseDto(Donation donation) {
-
-//        return DonorResponseDto.builder()
-//                .id(user.getId())
-//                .username(user.getUsername() == null ? "" : user.getUsername())
-//                .email(user.getEmail() == null ? "" : user.getEmail())
-//                .firstName(user.getFirstName() == null ? "" : user.getFirstName())
-//                .lastName(user.getLastName() == null ? "" : user.getLastName())
-//                .pesel(user.getPesel() == null ? "" : user.getPesel())
-//                .bloodGroupWithRh(user.getBlood() == null ? "" : user.getBlood().getName().getStringName())
-//                .gender(user.getGender() == null ? "" : user.getGender())
-//                .build();
-        return null;
+        return DonationResponseDto.builder()
+                .id(donation.getId())
+                .date(donation.getDate())
+                .donorId(donation.getUser().getId())
+                .donorFirstName(donation.getUser().getFirstName())
+                .donorLastName(donation.getUser().getLastName())
+                .amount(donation.getAmount())
+                .donationType(donation.getDonationType().getName())
+                .isReleased(donation.getIsReleased())
+                .recipientId(donation.getRecipient() == null ? null : donation.getRecipient().getId())
+                .recipientName(donation.getRecipient() == null ? null : donation.getRecipient().getName())
+                .build();
     }
 
     public Donation mapDonationRequestDtoToDonation(DonationRequestDto donationRequestDto) {
@@ -40,13 +40,11 @@ public class DonationMapper {
         donation.setIsReleased(donationRequestDto.getIsReleased());
         donation.setDonationType(donationRequestDto.getDonationType().equals("plasma") ?
                 EDonationType.PLASMA : EDonationType.BLOOD);
-        donation.setRecipient(recipientRepository.findById(donationRequestDto.getRecipientId()).orElse(null));
+        donation.setRecipient(donationRequestDto.getRecipientId() == null ?
+                null : recipientRepository.findById(donationRequestDto.getRecipientId()).orElse(null));
         donation.setUser(userRepository.findById(donationRequestDto.getDonorId())
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND)));
 
         return donation;
     }
-
-
 }
-

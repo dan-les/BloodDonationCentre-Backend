@@ -15,9 +15,12 @@ public class DonationResponseDto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private LocalDate date;
-    private String donorId;
+    private Long donorId;
+    private String donorFirstName;
+    private String donorLastName;
     private Long amount;
     private String donationType;
     private Boolean isReleased;
-    private String recipientId;
+    private Long recipientId;
+    private String recipientName;
 }

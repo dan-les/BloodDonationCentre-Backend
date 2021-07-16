@@ -67,10 +67,9 @@ public class DonorServiceImpl implements DonorService {
         user.setBlood(userRequest.getBlood());
         user.setEmail(userRequest.getEmail());
         user.setPesel(userRequest.getPesel());
-
+        user.setGender(userRequest.getGender());
 
         user = userRepository.saveAndFlush(user);
-
         return donorMapper.mapToDonorResponseDto(user);
     }
 }

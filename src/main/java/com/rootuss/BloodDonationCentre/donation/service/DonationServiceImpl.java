@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,14 +26,19 @@ public class DonationServiceImpl implements DonationService {
     private final DonationMapper donationMapper;
 
     @Override
-    public List<DonationResponseDto> getDonationsByDonorId(String donorId) {
-        return null;
+    public List<DonationResponseDto> getDonationsByDonorId(Long donorId) {
+        return donationRepository.findByAllUserId(donorId)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<DonationResponseDto> getAllDonations() {
-        var x = donationRepository.findAll();
-        return null;
+        return donationRepository.findAll()
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -51,9 +57,9 @@ public class DonationServiceImpl implements DonationService {
     public NextDonationResponseDto getSoonestPossibleDateForNextDonation(String donationType, Long donorId) {
         Optional<User> user = Optional.ofNullable(userRepository.findById(donorId))
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
-        var donations = donationRepository.findByUser(user);
-
-        var gender = user.get().getGender();
+//        var donations = donationRepository.findByUser(user);
+//
+//        var gender = user.get().getGender();
 
         var dummyDate = NextDonationResponseDto.builder().date(
                 LocalDate.of(2021, 7, 30)).build();
