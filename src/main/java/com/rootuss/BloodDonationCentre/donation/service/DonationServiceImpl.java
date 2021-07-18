@@ -1,8 +1,7 @@
 package com.rootuss.BloodDonationCentre.donation.service;
 
-import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
-import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
+import com.rootuss.BloodDonationCentre.blood.model.Blood;
+import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
 import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
@@ -10,6 +9,7 @@ import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
+import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +21,18 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DonationServiceImpl implements DonationService {
+    public static final int INTERVAL_8_WEEKS = 8;
+    public static final int INTERVAL_4_WEEKS = 4;
+    public static final int INTERVAL_2_WEEKS = 2;
+    public static final String WOMAN = "K";
+    public static final String MAN = "M";
+    public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
+    public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private final DonationRepository donationRepository;
     private final UserRepository userRepository;
     private final DonationMapper donationMapper;
+    private final DonorMapper donorMapper;
+
 
     @Override
     public List<DonationResponseDto> getDonationsByDonorId(Long donorId) {
@@ -57,13 +66,145 @@ public class DonationServiceImpl implements DonationService {
     public NextDonationResponseDto getSoonestPossibleDateForNextDonation(String donationType, Long donorId) {
         Optional<User> user = Optional.ofNullable(userRepository.findById(donorId))
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
-//        var donations = donationRepository.findByUser(user);
-//
-//        var gender = user.get().getGender();
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        return retrieveSoonestPossibleDateForNextDonation(donationRepository.findByUser(user), user, eDonationType);
 
-        var dummyDate = NextDonationResponseDto.builder().date(
-                LocalDate.of(2021, 7, 30)).build();
+    }
 
-        return dummyDate;
+    private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
+            List<Donation> donations, Optional<User> user, EDonationType nextDonationType) {
+        // pobranie krwi -> kobiety - max 4 razy w roku
+        // pobranie krwi -> mężczyźni - max 6 razy w roku
+
+        // poprzednie pobranie -> kolejne pobranie --- odstęp
+        // krew -> krew --- 8 tyg.
+        // krew -> osocze --- 4 tyg.
+        // osocze -> krew --- 4 tyg.
+        // osocze -> osocze --- 2 tyg.
+        Optional<Donation> lastDonation = donations.stream().findFirst();
+        if (lastDonation.isEmpty()) {
+            return NextDonationResponseDto.builder()
+                    .date(LocalDate.now())
+                    .build();
+        } else {
+            var lastDonationType = lastDonation.get().getDonationType();
+            var lastDonationDate = lastDonation.get().getDate();
+
+            long bloodDonationsInCurrentYearQuantity = retrieveBloodDonationsInCurrentYearQuantity(donations);
+
+            if (checkMaxDonationsQuantityPerYear(user, nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity))
+                return retrieveNextYearDate(lastDonationDate.getYear() + 1, 1, 1);
+            if (lastDonationType == EDonationType.BLOOD && nextDonationType == EDonationType.BLOOD) {
+                return calculateDateForNextDonation(lastDonationDate, INTERVAL_8_WEEKS);
+            } else if (lastDonationType == EDonationType.BLOOD && nextDonationType == EDonationType.PLASMA) {
+                return calculateDateForNextDonation(lastDonationDate, INTERVAL_4_WEEKS);
+            } else if (lastDonationType == EDonationType.PLASMA && nextDonationType == EDonationType.BLOOD) {
+                return calculateDateForNextDonation(lastDonationDate, INTERVAL_4_WEEKS);
+            } else {
+                return calculateDateForNextDonation(lastDonationDate, INTERVAL_2_WEEKS);
+            }
+        }
+    }
+
+    private long retrieveBloodDonationsInCurrentYearQuantity(List<Donation> donations) {
+        return donations.stream()
+                .filter(donation -> donation.getDonationType() == EDonationType.BLOOD)
+                .filter(donation -> donation.getDate().getYear() == LocalDate.now().getYear())
+                .count();
+    }
+
+    private boolean checkMaxDonationsQuantityPerYear(Optional<User> user, EDonationType nextDonationType, LocalDate lastDonationDate, long bloodDonationsInCurrentYearQuantity) {
+        if (nextDonationType == EDonationType.BLOOD &&
+                user.get().getGender().equals(WOMAN) &&
+                bloodDonationsInCurrentYearQuantity >= MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN &&
+                lastDonationDate.plusWeeks(INTERVAL_4_WEEKS).getYear() == lastDonationDate.getYear()) {
+            return true;
+        }
+        if (nextDonationType == EDonationType.BLOOD &&
+                user.get().getGender().equals(MAN) &&
+                bloodDonationsInCurrentYearQuantity >= MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN &&
+                lastDonationDate.plusWeeks(INTERVAL_4_WEEKS).getYear() == lastDonationDate.getYear()) {
+            return true;
+        }
+        return false;
+    }
+
+    private NextDonationResponseDto retrieveNextYearDate(int year, int month, int day) {
+        return NextDonationResponseDto.builder()
+                .date(LocalDate.of(year, month, day))
+                .build();
+    }
+
+    private NextDonationResponseDto calculateDateForNextDonation(LocalDate date, int interval) {
+        return NextDonationResponseDto.builder()
+                .date(date.plusWeeks(interval))
+                .build();
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
+            String donationType, Boolean isReleased, String bloodGroupWithRh) {
+
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+
+        return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(eDonationType, isReleased, blood)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByDonationTypeAndIsReleased(String donationType, Boolean isReleased) {
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        return donationRepository.findAllByDonationTypeAndIsReleased(eDonationType, isReleased)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByDonationTypeAndBloodGroupWithRh(String donationType, String bloodGroupWithRh) {
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        return donationRepository.findAllByDonationTypeAndBloodGroupWithRh(eDonationType, blood)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByDonationType(String donationType) {
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        return donationRepository.findAllByDonationType(eDonationType)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByIsReleasedAndBloodGroupWithRh(Boolean isReleased, String bloodGroupWithRh) {
+        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        return donationRepository.findAllByIsReleasedAndBloodGroupWithRh(isReleased, blood)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByIsReleased(Boolean isReleased) {
+        return donationRepository.findAllByIsReleased(isReleased)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh) {
+        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        return donationRepository.findAllByBloodGroupWithRh(blood)
+                .stream()
+                .map(donationMapper::mapToDonationResponseDto)
+                .collect(Collectors.toList());
     }
 }

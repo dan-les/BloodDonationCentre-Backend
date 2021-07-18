@@ -23,4 +23,5 @@ public class DonationResponseDto {
     private Boolean isReleased;
     private Long recipientId;
     private String recipientName;
+    private String bloodGroupWithRh;
 }

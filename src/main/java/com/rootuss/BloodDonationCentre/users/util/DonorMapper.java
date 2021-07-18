@@ -40,16 +40,14 @@ public class DonorMapper {
         user.setFirstName(donorRequestDto.getFirstName());
         user.setLastName(donorRequestDto.getLastName());
         user.setPesel(donorRequestDto.getPesel());
-        user.setBlood(getBloodGroupFromDonorRequestDto(donorRequestDto));
+        user.setBlood(retrieveBloodGroupFromBloodName(donorRequestDto.getBloodGroupWithRh()));
         user.setEmail(donorRequestDto.getEmail());
         user.setUsername(donorRequestDto.getUsername());
         user.setGender(donorRequestDto.getGender());
         return user;
     }
 
-    private Blood getBloodGroupFromDonorRequestDto(DonorRequestDto donorRequestDto) {
-
-        var bloodName = donorRequestDto.getBloodGroupWithRh();
+    public Blood retrieveBloodGroupFromBloodName(String bloodName) {
         var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getStringName().equals(bloodName)).findFirst()
                 .orElseThrow(() -> new BloodDonationCentreException(Error.BLOOD_TYPE_NOT_FOUND));
 

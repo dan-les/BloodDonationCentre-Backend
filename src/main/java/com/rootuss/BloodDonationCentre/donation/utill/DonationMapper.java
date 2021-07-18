@@ -27,6 +27,7 @@ public class DonationMapper {
                 .donorLastName(donation.getUser().getLastName())
                 .amount(donation.getAmount())
                 .donationType(donation.getDonationType().getName())
+                .bloodGroupWithRh(donation.getUser().getBlood().getName().getStringName())
                 .isReleased(donation.getIsReleased())
                 .recipientId(donation.getRecipient() == null ? null : donation.getRecipient().getId())
                 .recipientName(donation.getRecipient() == null ? null : donation.getRecipient().getName())
@@ -38,13 +39,16 @@ public class DonationMapper {
         donation.setAmount(donationRequestDto.getAmount());
         donation.setDate(donationRequestDto.getDate());
         donation.setIsReleased(donationRequestDto.getIsReleased());
-        donation.setDonationType(donationRequestDto.getDonationType().equals("plasma") ?
-                EDonationType.PLASMA : EDonationType.BLOOD);
+        donation.setDonationType(retrieveEDonationType(donationRequestDto.getDonationType()));
         donation.setRecipient(donationRequestDto.getRecipientId() == null ?
                 null : recipientRepository.findById(donationRequestDto.getRecipientId()).orElse(null));
         donation.setUser(userRepository.findById(donationRequestDto.getDonorId())
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND)));
 
         return donation;
+    }
+
+    public EDonationType retrieveEDonationType(String donationType) {
+        return donationType.equals("plasma") ? EDonationType.PLASMA : EDonationType.BLOOD;
     }
 }

@@ -21,11 +21,42 @@ public class DonationController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public List<DonationResponseDto> getDonations(@RequestParam(required = false) Long donorId) {
+    public List<DonationResponseDto> getDonations(@RequestParam(required = false) Long donorId,
+                                                  @RequestParam(required = false) String donationType,
+                                                  @RequestParam(required = false) Boolean isReleased,
+                                                  @RequestParam(required = false) String bloodGroupWithRh) {
         if (donorId != null) {
             return donationService.getDonationsByDonorId(donorId);
         } else {
-            return donationService.getAllDonations();
+            if (donationType != null) {
+                if (isReleased != null) {
+                    if (bloodGroupWithRh != null) {
+                        return donationService.getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(donationType, isReleased, bloodGroupWithRh);
+                    } else {
+                        return donationService.getAllByDonationTypeAndIsReleased(donationType, isReleased);
+                    }
+                } else {
+                    if (bloodGroupWithRh != null) {
+                        return donationService.getAllByDonationTypeAndBloodGroupWithRh(donationType, bloodGroupWithRh);
+                    } else {
+                        return donationService.getAllByDonationType(donationType);
+                    }
+                }
+            } else {
+                if (isReleased != null) {
+                    if (bloodGroupWithRh != null) {
+                        return donationService.getAllByIsReleasedAndBloodGroupWithRh(isReleased, bloodGroupWithRh);
+                    } else {
+                        return donationService.getAllByIsReleased(isReleased);
+                    }
+                } else {
+                    if (bloodGroupWithRh != null) {
+                        return donationService.getAllByBloodGroupWithRh(bloodGroupWithRh);
+                    } else {
+                        return donationService.getAllDonations();
+                    }
+                }
+            }
         }
     }
 
