@@ -6,10 +6,12 @@ import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
 import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
+import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -30,6 +32,7 @@ public class DonationServiceImpl implements DonationService {
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private final DonationRepository donationRepository;
     private final UserRepository userRepository;
+    private final RecipientRepository recipientRepository;
     private final DonationMapper donationMapper;
     private final DonorMapper donorMapper;
 
@@ -206,5 +209,20 @@ public class DonationServiceImpl implements DonationService {
                 .stream()
                 .map(donationMapper::mapToDonationResponseDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
+
+        var donation = donationRepository.findById(recipientChangeRequestDto.getId()).orElseThrow(
+                () -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
+
+
+        donation.setId(recipientChangeRequestDto.getId());
+        donation.setIsReleased(recipientChangeRequestDto.getIsReleased());
+        donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId()).orElseThrow(
+                () -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
+        donationRepository.save(donation);
+        return new MessageResponse("Donation patch successfully");
     }
 }

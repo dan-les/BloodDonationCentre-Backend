@@ -19,5 +19,4 @@ public interface ReservationService {
     void deleteById(Long id);
 
     ReservationResponseDto getReservationById(Long id);
-
 }

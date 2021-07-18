@@ -3,8 +3,10 @@ package com.rootuss.BloodDonationCentre.donation.controller;
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
+import com.rootuss.BloodDonationCentre.donation.model.RecipientChangeRequestDto;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
+import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -80,6 +82,12 @@ public class DonationController {
                                         @RequestBody @Valid DonationRequestDto donorRequestDto) {
 
         return donationService.putDonation(id, donorRequestDto);
+    }
+
+    @PreAuthorize("hasRole('STAFF')")
+    @PatchMapping
+    public MessageResponse patchDonation(@RequestBody RecipientChangeRequestDto recipientChangeRequestDto) {
+        return donationService.patchDonation(recipientChangeRequestDto);
     }
 
 }

@@ -3,7 +3,9 @@ package com.rootuss.BloodDonationCentre.donation.service;
 import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
 import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
 import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
+import com.rootuss.BloodDonationCentre.donation.model.RecipientChangeRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
+import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 
 import java.util.List;
 
@@ -34,4 +36,6 @@ public interface DonationService {
     List<DonationResponseDto> getAllByIsReleased(Boolean isReleased);
 
     List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh);
+
+    MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto);
 }

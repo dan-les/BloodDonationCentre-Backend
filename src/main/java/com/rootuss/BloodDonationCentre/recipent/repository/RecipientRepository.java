@@ -15,7 +15,4 @@ public interface RecipientRepository extends JpaRepository<Recipient, Long> {
 
     @Override
     Optional<Recipient> findById(Long aLong);
-
-    //    @Query("SELECT d FROM Donation d WHERE d.user = :user ORDER BY d.date DESC")
-//    List<Donation> findByUser(Optional<User> user);
 }
