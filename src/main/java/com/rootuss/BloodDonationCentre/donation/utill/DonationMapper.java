@@ -27,7 +27,7 @@ public class DonationMapper {
                 .donorLastName(donation.getUser().getLastName())
                 .amount(donation.getAmount())
                 .donationType(donation.getDonationType().getName())
-                .bloodGroupWithRh(donation.getUser().getBlood().getName().getStringName())
+                .bloodGroupWithRh(donation.getUser().getBlood() == null ? null : donation.getUser().getBlood().getName().getStringName())
                 .isReleased(donation.getIsReleased())
                 .recipientId(donation.getRecipient() == null ? null : donation.getRecipient().getId())
                 .recipientName(donation.getRecipient() == null ? null : donation.getRecipient().getName())

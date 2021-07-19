@@ -1,9 +1,6 @@
 package com.rootuss.BloodDonationCentre.donation.controller;
 
-import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
-import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.RecipientChangeRequestDto;
+import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
@@ -65,7 +62,6 @@ public class DonationController {
     @GetMapping("/next")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     public NextDonationResponseDto getSoonestPossibleDateForNextDonation(@RequestParam Long donorId, String donationType) {
-        //albo zwracać rok, miesiąc dzień
         return donationService.getSoonestPossibleDateForNextDonation(donationType, donorId);
 
     }
@@ -90,4 +86,9 @@ public class DonationController {
         return donationService.patchDonation(recipientChangeRequestDto);
     }
 
+    @GetMapping("/statistics")
+    @PreAuthorize("hasRole('STAFF')")
+    public List<StatisticsResponseDto> getBloodStatistics() {
+        return donationService.getDonationsStatistics();
+    }
 }

@@ -1,6 +1,7 @@
 package com.rootuss.BloodDonationCentre.donation.service;
 
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
+import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
 import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
@@ -16,6 +17,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -30,6 +33,7 @@ public class DonationServiceImpl implements DonationService {
     public static final String MAN = "M";
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
+    private static final Boolean IS_RELEASED_FALSE = false;
     private final DonationRepository donationRepository;
     private final UserRepository userRepository;
     private final RecipientRepository recipientRepository;
@@ -225,4 +229,25 @@ public class DonationServiceImpl implements DonationService {
         donationRepository.save(donation);
         return new MessageResponse("Donation patch successfully");
     }
+
+    @Override
+    public List<StatisticsResponseDto> getDonationsStatistics() {
+        List<StatisticsResponseDto> statisticsResponseDtoArrayList = new ArrayList<>();
+        Arrays.asList(EBlood.values())
+                .forEach(value -> {
+                    statisticsResponseDtoArrayList.add(
+                            StatisticsResponseDto.builder()
+                                    .bloodGroupWithRh(value.getStringName())
+                                    .quantity(
+                                            donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
+                                                    EDonationType.BLOOD,
+                                                    IS_RELEASED_FALSE,
+                                                    donorMapper.retrieveBloodGroupFromBloodName(value.getStringName()))
+                                                    .stream()
+                                                    .mapToLong(Donation::getAmount).sum())
+                                    .build());
+                });
+        return statisticsResponseDtoArrayList;
+    }
+
 }

@@ -1,9 +1,6 @@
 package com.rootuss.BloodDonationCentre.donation.service;
 
-import com.rootuss.BloodDonationCentre.donation.model.DonationRequestDto;
-import com.rootuss.BloodDonationCentre.donation.model.DonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.NextDonationResponseDto;
-import com.rootuss.BloodDonationCentre.donation.model.RecipientChangeRequestDto;
+import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 
@@ -38,4 +35,6 @@ public interface DonationService {
     List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh);
 
     MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto);
+
+    List<StatisticsResponseDto> getDonationsStatistics();
 }
