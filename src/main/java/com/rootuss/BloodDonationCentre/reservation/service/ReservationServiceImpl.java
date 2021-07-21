@@ -75,4 +75,11 @@ public class ReservationServiceImpl implements ReservationService {
                 () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
         return reservationMapper.mapToReservationResponseDto(reservation);
     }
+
+    @Override
+    public List<ReservationResponseDto> getAllReservationsByDonorId(Long donorId) {
+        return reservationRepository.findAllByDonorId(donorId).stream()
+                .map(reservationMapper::mapToReservationResponseDto)
+                .collect(Collectors.toList());
+    }
 }

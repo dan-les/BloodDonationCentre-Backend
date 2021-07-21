@@ -53,6 +53,13 @@ public class ReservationController {
         }
     }
 
+    @GetMapping(value = "/donor/list/{donorId}")
+    @PreAuthorize("hasRole('STAFF')")
+    public List<ReservationResponseDto> getReservationsByDonorId(@PathVariable Long donorId) {
+        return reservationService.getAllReservationsByDonorId(donorId);
+
+    }
+
     @PreAuthorize("hasRole('STAFF')")
     @DeleteMapping(value = "/{id}")
     public MessageResponse deleteReservation(@PathVariable Long id) {
@@ -63,7 +70,6 @@ public class ReservationController {
     @PreAuthorize("hasRole('STAFF')")
     @GetMapping(value = "/{id}")
     public ReservationResponseDto putDonation(@PathVariable Long id) {
-
         return reservationService.getReservationById(id);
     }
 
