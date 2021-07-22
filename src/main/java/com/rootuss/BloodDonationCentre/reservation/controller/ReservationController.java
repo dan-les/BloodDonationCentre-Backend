@@ -69,7 +69,7 @@ public class ReservationController {
 
     @PreAuthorize("hasRole('STAFF')")
     @GetMapping(value = "/{id}")
-    public ReservationResponseDto putDonation(@PathVariable Long id) {
+    public ReservationResponseDto getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
 

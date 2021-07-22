@@ -94,7 +94,7 @@ public class DonationController {
 
     @GetMapping("/user/statistics/{donorId}")
     @PreAuthorize("hasRole('USER')")
-    public UserStatisticsResponseDto getBloodStatistics(@PathVariable Long donorId) {
+    public UserStatisticsResponseDto getUserDonationsStatistics(@PathVariable Long donorId) {
         return donationService.getUserDonationsStatistics(donorId);
     }
 }
