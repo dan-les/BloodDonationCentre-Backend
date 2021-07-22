@@ -12,7 +12,8 @@ public enum Error {
     USER_DONOR_NOT_FOUND("USER type not found", HttpStatus.NOT_FOUND),
     RESERVATION_NOT_FOUND("Reservation not found", HttpStatus.NOT_FOUND),
     DONATION_NOT_FOUND("Donation not found", HttpStatus.NOT_FOUND),
-    RECIPIENT_NOT_FOUND("Recipient not found", HttpStatus.NOT_FOUND);
+    RECIPIENT_NOT_FOUND("Recipient not found", HttpStatus.NOT_FOUND),
+    ROLE_NOT_FOUND("Role not found", HttpStatus.NOT_FOUND);
 //    BAD_REQUEST(null, HttpStatus.BAD_REQUEST),
 //    UNAUTHORIZED_REQUEST(null, HttpStatus.UNAUTHORIZED),
 //    BAD_LOGIN_CREDENTIALS("Bad login credentials", HttpStatus.UNAUTHORIZED),

@@ -1,6 +1,8 @@
 package com.rootuss.BloodDonationCentre.users.controller;
 
 
+import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
+import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
 import com.rootuss.BloodDonationCentre.roles.repository.RoleRepository;
@@ -85,7 +87,9 @@ public class AuthController {
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+                encoder.encode(signUpRequest.getPassword()),
+                signUpRequest.getFirstName(),
+                signUpRequest.getLastName());
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -99,19 +103,19 @@ public class AuthController {
                 switch (role) {
                     case "admin":
                         Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
                         roles.add(adminRole);
 
                         break;
                     case "staff":
                         Role staffRole = roleRepository.findByName(ERole.ROLE_STAFF)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
                         roles.add(staffRole);
 
                         break;
                     default:
                         Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
                         roles.add(userRole);
                 }
             });
@@ -120,6 +124,6 @@ public class AuthController {
         user.setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("Użytkownik pomyślnie zarejestrowany!"));
+        return ResponseEntity.ok(new MessageResponse("User succesfully register!"));
     }
 }

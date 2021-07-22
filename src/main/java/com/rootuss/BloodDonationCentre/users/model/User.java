@@ -61,14 +61,12 @@ public class User {
     }
 
     //    public User(String username, String email, String password, String firstName, String lastName, String pesel, Blood blood) {
-    public User(String username, String email, String password) {
+    public User(String username, String email, String password, String firstName, String lastName) {
         this.username = username;
         this.email = email;
         this.password = password;
-//        this.pesel = pesel;
-//        this.firstName = firstName;
-//        this.lastName = lastName;
-//        this.blood = blood;
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 
 
