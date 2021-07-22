@@ -5,7 +5,7 @@ import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.service.ReservationService;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -16,10 +16,10 @@ import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/reservation")
 public class ReservationController {
-    private final ReservationService reservationService;
+    @Autowired
+    private ReservationService reservationService;
 
     @GetMapping("/hours/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
@@ -54,7 +54,7 @@ public class ReservationController {
     }
 
     @GetMapping(value = "/donor/list/{donorId}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #donorId)")
     public List<ReservationResponseDto> getReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);
 

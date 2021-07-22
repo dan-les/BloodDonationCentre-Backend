@@ -13,7 +13,7 @@ import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -24,7 +24,6 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class DonationServiceImpl implements DonationService {
     public static final int INTERVAL_8_WEEKS = 8;
     public static final int INTERVAL_4_WEEKS = 4;
@@ -34,11 +33,16 @@ public class DonationServiceImpl implements DonationService {
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private static final Boolean IS_RELEASED_FALSE = false;
-    private final DonationRepository donationRepository;
-    private final UserRepository userRepository;
-    private final RecipientRepository recipientRepository;
-    private final DonationMapper donationMapper;
-    private final DonorMapper donorMapper;
+    @Autowired
+    private DonationRepository donationRepository;
+    @Autowired
+    private UserRepository userRepository;
+    @Autowired
+    private RecipientRepository recipientRepository;
+    @Autowired
+    private DonationMapper donationMapper;
+    @Autowired
+    private DonorMapper donorMapper;
 
 
     @Override
@@ -242,12 +246,28 @@ public class DonationServiceImpl implements DonationService {
                                             donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
                                                     EDonationType.BLOOD,
                                                     IS_RELEASED_FALSE,
-                                                    donorMapper.retrieveBloodGroupFromBloodName(value.getStringName()))
-                                                    .stream()
-                                                    .mapToLong(Donation::getAmount).sum())
+                                                    donorMapper.retrieveBloodGroupFromBloodName(value.getStringName())
+                                            ).stream().mapToLong(Donation::getAmount).sum()
+                                    )
                                     .build());
                 });
         return statisticsResponseDtoArrayList;
     }
 
+    @Override
+    public UserStatisticsResponseDto getUserDonationsStatistics(Long donorId) {
+        var donations = donationRepository.findByAllUserId(donorId);
+
+        long plasmaAmount = donations.stream()
+                .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
+                .mapToLong(Donation::getAmount).sum();
+        long bloodAmount = donations.stream()
+                .filter(donation -> donation.getDonationType() == EDonationType.BLOOD)
+                .mapToLong(Donation::getAmount).sum();
+
+        return UserStatisticsResponseDto.builder()
+                .blood(bloodAmount)
+                .plasma(plasmaAmount)
+                .build();
+    }
 }

@@ -37,4 +37,6 @@ public interface DonationService {
     MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto);
 
     List<StatisticsResponseDto> getDonationsStatistics();
+
+    UserStatisticsResponseDto getUserDonationsStatistics(Long donorId);
 }

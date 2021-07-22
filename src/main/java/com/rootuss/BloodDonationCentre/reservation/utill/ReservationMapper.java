@@ -8,16 +8,16 @@ import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Component
-@RequiredArgsConstructor
 public class ReservationMapper {
-    private final UserRepository userRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public Reservation mapReservationRequestDtoToReservation(ReservationRequestDto reservationRequestDto) {
         Reservation reservation = new Reservation();

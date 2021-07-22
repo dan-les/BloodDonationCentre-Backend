@@ -4,7 +4,7 @@ import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.service.DonorService;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,10 +14,11 @@ import java.util.Optional;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequiredArgsConstructor
+
 @RequestMapping("/api/donor")
 public class DonorController {
-    private final DonorService donorService;
+    @Autowired
+    private DonorService donorService;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")
@@ -32,7 +33,7 @@ public class DonorController {
 //    }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #id)")
     public Optional<DonorResponseDto> getDonorById(@PathVariable Long id) {
         return donorService.loadUserById(id);
     }
