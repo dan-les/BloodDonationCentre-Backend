@@ -57,7 +57,6 @@ public class ReservationController {
     @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #donorId)")
     public List<ReservationResponseDto> getReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);
-
     }
 
     @PreAuthorize("hasRole('STAFF')")
