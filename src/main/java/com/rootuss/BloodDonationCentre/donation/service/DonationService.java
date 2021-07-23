@@ -3,6 +3,7 @@ package com.rootuss.BloodDonationCentre.donation.service;
 import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public interface DonationService {
 
     List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh);
 
-    MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto);
+    ResponseEntity<MessageResponse> patchDonation(RecipientChangeRequestDto recipientChangeRequestDto);
 
     List<StatisticsResponseDto> getDonationsStatistics();
 

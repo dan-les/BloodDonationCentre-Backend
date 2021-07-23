@@ -2,6 +2,7 @@ package com.rootuss.BloodDonationCentre.donation.service;
 
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.blood.model.EBlood;
+import com.rootuss.BloodDonationCentre.blood.utill.BloodMapper;
 import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
 import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
@@ -14,6 +15,7 @@ import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -43,6 +45,8 @@ public class DonationServiceImpl implements DonationService {
     private DonationMapper donationMapper;
     @Autowired
     private DonorMapper donorMapper;
+    @Autowired
+    private BloodMapper bloodMapper;
 
 
     @Override
@@ -157,7 +161,7 @@ public class DonationServiceImpl implements DonationService {
             String donationType, Boolean isReleased, String bloodGroupWithRh) {
 
         EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
 
         return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(eDonationType, isReleased, blood)
                 .stream()
@@ -177,7 +181,7 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public List<DonationResponseDto> getAllByDonationTypeAndBloodGroupWithRh(String donationType, String bloodGroupWithRh) {
         EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
         return donationRepository.findAllByDonationTypeAndBloodGroupWithRh(eDonationType, blood)
                 .stream()
                 .map(donationMapper::mapToDonationResponseDto)
@@ -195,7 +199,7 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public List<DonationResponseDto> getAllByIsReleasedAndBloodGroupWithRh(Boolean isReleased, String bloodGroupWithRh) {
-        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
         return donationRepository.findAllByIsReleasedAndBloodGroupWithRh(isReleased, blood)
                 .stream()
                 .map(donationMapper::mapToDonationResponseDto)
@@ -212,7 +216,7 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh) {
-        Blood blood = donorMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
+        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
         return donationRepository.findAllByBloodGroupWithRh(blood)
                 .stream()
                 .map(donationMapper::mapToDonationResponseDto)
@@ -220,18 +224,17 @@ public class DonationServiceImpl implements DonationService {
     }
 
     @Override
-    public MessageResponse patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
+    public ResponseEntity<MessageResponse> patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
 
         var donation = donationRepository.findById(recipientChangeRequestDto.getId()).orElseThrow(
                 () -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
-
 
         donation.setId(recipientChangeRequestDto.getId());
         donation.setIsReleased(recipientChangeRequestDto.getIsReleased());
         donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId()).orElseThrow(
                 () -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
         donationRepository.save(donation);
-        return new MessageResponse("Donation patch successfully");
+        return ResponseEntity.ok(new MessageResponse("Donation patch successfully"));
     }
 
     @Override
@@ -239,19 +242,18 @@ public class DonationServiceImpl implements DonationService {
         List<StatisticsResponseDto> statisticsResponseDtoArrayList = new ArrayList<>();
         Arrays.asList(EBlood.values())
                 .forEach(value -> {
-                    statisticsResponseDtoArrayList.add(
-                            StatisticsResponseDto.builder()
-                                    .bloodGroupWithRh(value.getStringName())
-                                    .quantity(
-                                            donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
-                                                    EDonationType.BLOOD,
-                                                    IS_RELEASED_FALSE,
-                                                    donorMapper.retrieveBloodGroupFromBloodName(value.getStringName())
-                                            ).stream().mapToLong(Donation::getAmount).sum()
-                                    )
-                                    .build());
+                    statisticsResponseDtoArrayList.add(StatisticsResponseDto.builder()
+                            .bloodGroupWithRh(value.getStringName())
+                            .quantity(retrieveBloodQuantity(value))
+                            .build());
                 });
         return statisticsResponseDtoArrayList;
+    }
+
+    private long retrieveBloodQuantity(EBlood value) {
+        return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
+                EDonationType.BLOOD, IS_RELEASED_FALSE, bloodMapper.retrieveBloodGroupFromBloodName(value.getStringName())).stream()
+                .mapToLong(Donation::getAmount).sum();
     }
 
     @Override

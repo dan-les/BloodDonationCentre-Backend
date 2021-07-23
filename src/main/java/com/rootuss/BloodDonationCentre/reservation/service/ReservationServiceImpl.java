@@ -2,7 +2,7 @@ package com.rootuss.BloodDonationCentre.reservation.service;
 
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
-import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
+import com.rootuss.BloodDonationCentre.reservation.model.AvailableHoursForReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
@@ -34,13 +34,13 @@ public class ReservationServiceImpl implements ReservationService {
     private final int lastEntry = 19;
 
     @Override
-    public List<HoursResponseDto> getHoursWithAvailability(LocalDate date) {
-        List<HoursResponseDto> list = new ArrayList<>();
+    public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(LocalDate date) {
+        List<AvailableHoursForReservationResponseDto> list = new ArrayList<>();
         for (int i = firstEntry; i <= lastEntry; i++) {
             if (reservationRepository.getAllByTimeAndDate(LocalTime.of(i, 0), date).size() >= maxQuantityOfReservationsInTheSameTime) {
-                list.add(HoursResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(true).build());
+                list.add(AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(true).build());
             } else {
-                list.add(HoursResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(false).build());
+                list.add(AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(false).build());
             }
         }
         return list;

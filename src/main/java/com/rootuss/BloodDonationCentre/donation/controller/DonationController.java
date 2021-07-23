@@ -5,6 +5,7 @@ import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -63,7 +64,6 @@ public class DonationController {
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     public NextDonationResponseDto getSoonestPossibleDateForNextDonation(@RequestParam Long donorId, String donationType) {
         return donationService.getSoonestPossibleDateForNextDonation(donationType, donorId);
-
     }
 
     @PreAuthorize("hasRole('STAFF')")
@@ -76,13 +76,12 @@ public class DonationController {
     @PutMapping(value = "/{id}")
     public DonorResponseDto putDonation(@PathVariable Long id,
                                         @RequestBody @Valid DonationRequestDto donorRequestDto) {
-
         return donationService.putDonation(id, donorRequestDto);
     }
 
     @PreAuthorize("hasRole('STAFF')")
     @PatchMapping
-    public MessageResponse patchDonation(@RequestBody RecipientChangeRequestDto recipientChangeRequestDto) {
+    public ResponseEntity<MessageResponse> patchDonation(@RequestBody RecipientChangeRequestDto recipientChangeRequestDto) {
         return donationService.patchDonation(recipientChangeRequestDto);
     }
 

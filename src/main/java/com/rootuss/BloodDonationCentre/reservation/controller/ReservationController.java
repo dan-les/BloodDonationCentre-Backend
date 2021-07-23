@@ -1,12 +1,13 @@
 package com.rootuss.BloodDonationCentre.reservation.controller;
 
-import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
+import com.rootuss.BloodDonationCentre.reservation.model.AvailableHoursForReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.service.ReservationService;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,19 +24,11 @@ public class ReservationController {
 
     @GetMapping("/hours/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public List<HoursResponseDto> getHoursWithAvailability(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(@RequestParam
+                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return reservationService.getHoursWithAvailability(date);
     }
 
-    //
-//    @GetMapping("/next")
-//    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-//    public NextDonationResponseDto getSoonestPossibleDateForNextDonation(@RequestParam Long donorId, String donationType) {
-//        //albo zwracać rok, miesiąc dzień
-//        return donationService.getSoonestPossibleDateForNextDonation(donationType, donorId);
-//
-//    }
-//
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     @PostMapping
     public ReservationResponseDto addReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto) {
@@ -61,9 +54,9 @@ public class ReservationController {
 
     @PreAuthorize("hasRole('STAFF')")
     @DeleteMapping(value = "/{id}")
-    public MessageResponse deleteReservation(@PathVariable Long id) {
+    public ResponseEntity<MessageResponse> deleteReservation(@PathVariable Long id) {
         reservationService.deleteById(id);
-        return new MessageResponse("Reservation delete successfully");
+        return ResponseEntity.ok(new MessageResponse("Reservation delete successfully"));
     }
 
     @PreAuthorize("hasRole('STAFF')")
@@ -71,14 +64,4 @@ public class ReservationController {
     public ReservationResponseDto getReservationById(@PathVariable Long id) {
         return reservationService.getReservationById(id);
     }
-
-
-//    @PreAuthorize("hasRole('STAFF')")
-//    @PutMapping(value = "/{id}")
-//    public DonorResponseDto putDonation(@PathVariable Long id,
-//                                        @RequestBody @Valid DonationRequestDto donorRequestDto) {
-//
-//        return donationService.putDonation(id, donorRequestDto);
-//    }
-
 }

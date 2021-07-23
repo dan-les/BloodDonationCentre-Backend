@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class HoursResponseDto {
+public class AvailableHoursForReservationResponseDto {
     private String hour;
     private Boolean disabled;
 }

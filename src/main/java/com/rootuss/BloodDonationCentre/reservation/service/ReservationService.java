@@ -1,6 +1,6 @@
 package com.rootuss.BloodDonationCentre.reservation.service;
 
-import com.rootuss.BloodDonationCentre.reservation.model.HoursResponseDto;
+import com.rootuss.BloodDonationCentre.reservation.model.AvailableHoursForReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 
@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
-    List<HoursResponseDto> getHoursWithAvailability(LocalDate date);
+    List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(LocalDate date);
 
     ReservationResponseDto addReservation(ReservationRequestDto reservationRequestDto);
 
