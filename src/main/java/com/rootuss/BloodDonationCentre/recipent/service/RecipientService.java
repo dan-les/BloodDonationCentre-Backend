@@ -1,7 +1,7 @@
 package com.rootuss.BloodDonationCentre.recipent.service;
 
-import com.rootuss.BloodDonationCentre.recipent.controller.RecipientRequestDto;
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
+import com.rootuss.BloodDonationCentre.recipent.model.RecipientRequestDto;
 
 import java.util.List;
 

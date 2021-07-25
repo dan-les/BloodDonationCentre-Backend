@@ -1,6 +1,7 @@
 package com.rootuss.BloodDonationCentre.recipent.controller;
 
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
+import com.rootuss.BloodDonationCentre.recipent.model.RecipientRequestDto;
 import com.rootuss.BloodDonationCentre.recipent.service.RecipientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

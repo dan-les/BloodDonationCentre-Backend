@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.recipent.controller;
+package com.rootuss.BloodDonationCentre.recipent.model;
 
 import lombok.Getter;
 

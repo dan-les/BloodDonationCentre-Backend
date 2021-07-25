@@ -1,7 +1,6 @@
 package com.rootuss.BloodDonationCentre.donation.service;
 
 import com.rootuss.BloodDonationCentre.donation.model.*;
-import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import org.springframework.http.ResponseEntity;
 
@@ -17,7 +16,7 @@ public interface DonationService {
 
     DonationResponseDto addDonation(DonationRequestDto donationRequestDto);
 
-    DonorResponseDto putDonation(Long id, DonationRequestDto donorRequestDto);
+    DonationResponseDto putDonation(Long id, DonationRequestDto donorRequestDto);
 
     NextDonationResponseDto getSoonestPossibleDateForNextDonation(String donationType, Long donorId);
 

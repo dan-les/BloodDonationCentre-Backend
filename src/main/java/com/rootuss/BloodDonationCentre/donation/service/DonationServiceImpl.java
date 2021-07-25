@@ -9,7 +9,6 @@ import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
-import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
@@ -73,7 +72,8 @@ public class DonationServiceImpl implements DonationService {
     }
 
     @Override
-    public DonorResponseDto putDonation(Long id, DonationRequestDto donorRequestDto) {
+    public DonationResponseDto putDonation(Long id, DonationRequestDto donorRequestDto) {
+        // TODO
         return null;
     }
 

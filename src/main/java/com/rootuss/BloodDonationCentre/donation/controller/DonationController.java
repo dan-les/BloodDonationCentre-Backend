@@ -2,7 +2,6 @@ package com.rootuss.BloodDonationCentre.donation.controller;
 
 import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
-import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -74,8 +73,8 @@ public class DonationController {
 
     @PreAuthorize("hasRole('STAFF')")
     @PutMapping(value = "/{id}")
-    public DonorResponseDto putDonation(@PathVariable Long id,
-                                        @RequestBody @Valid DonationRequestDto donorRequestDto) {
+    public DonationResponseDto putDonation(@PathVariable Long id,
+                                           @RequestBody @Valid DonationRequestDto donorRequestDto) {
         return donationService.putDonation(id, donorRequestDto);
     }
 
