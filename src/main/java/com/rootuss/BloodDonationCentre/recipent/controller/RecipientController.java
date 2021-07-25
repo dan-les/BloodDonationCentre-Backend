@@ -19,7 +19,7 @@ public class RecipientController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")
-    public List<Recipient> getRecipients() {
+    public List<Recipient> getAllRecipients() {
         return recipientService.getAllRecipients();
     }
 

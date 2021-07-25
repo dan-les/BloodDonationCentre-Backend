@@ -23,7 +23,7 @@ public class DonorController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")
-    public List<DonorResponseDto> getDonor() {
+    public List<DonorResponseDto> getAllDonors() {
         return donorService.getAllDonors();
     }
 

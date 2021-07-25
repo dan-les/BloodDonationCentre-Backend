@@ -22,7 +22,7 @@ public class ReservationController {
     @Autowired
     private ReservationService reservationService;
 
-    @GetMapping("/hours/list")
+    @GetMapping("/available-hours/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(@RequestParam
                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -37,8 +37,8 @@ public class ReservationController {
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")
-    public List<ReservationResponseDto> getReservations(@RequestParam(required = false)
-                                                        @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public List<ReservationResponseDto> getAllReservations(@RequestParam(required = false)
+                                                           @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         if (date != null) {
             return reservationService.getAllReservationsByDate(date);
         } else {
@@ -46,9 +46,9 @@ public class ReservationController {
         }
     }
 
-    @GetMapping(value = "/donor/list/{donorId}")
+    @GetMapping(value = "list/donor/{donorId}")
     @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #donorId)")
-    public List<ReservationResponseDto> getReservationsByDonorId(@PathVariable Long donorId) {
+    public List<ReservationResponseDto> getAllReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);
     }
 
