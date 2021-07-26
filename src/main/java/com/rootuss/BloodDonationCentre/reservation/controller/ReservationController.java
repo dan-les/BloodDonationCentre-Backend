@@ -52,7 +52,7 @@ public class ReservationController {
         return reservationService.getAllReservationsByDonorId(donorId);
     }
 
-    @PreAuthorize("hasRole('STAFF')")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasReservationProperUserId(authentication, #id)")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<MessageResponse> deleteReservation(@PathVariable Long id) {
         reservationService.deleteById(id);
