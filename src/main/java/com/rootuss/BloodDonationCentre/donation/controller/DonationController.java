@@ -86,8 +86,8 @@ public class DonationController {
 
     @GetMapping("/statistics")
     @PreAuthorize("hasRole('STAFF')")
-    public List<StatisticsResponseDto> getBloodStatistics() {
-        return donationService.getDonationsStatistics();
+    public List<StatisticsResponseDto> getBloodStatistics(@RequestParam String donationType) {
+        return donationService.getDonationsStatistics(donationType);
     }
 
     @GetMapping("/donor/{donorId}/statistics")

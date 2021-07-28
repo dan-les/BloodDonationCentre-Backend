@@ -238,28 +238,29 @@ public class DonationServiceImpl implements DonationService {
     }
 
     @Override
-    public List<StatisticsResponseDto> getDonationsStatistics() {
+    public List<StatisticsResponseDto> getDonationsStatistics(String donationType) {
         List<StatisticsResponseDto> statisticsResponseDtoArrayList = new ArrayList<>();
         Arrays.asList(EBlood.values())
                 .forEach(value -> {
                     statisticsResponseDtoArrayList.add(StatisticsResponseDto.builder()
                             .bloodGroupWithRh(value.getStringName())
-                            .quantity(retrieveBloodQuantity(value))
+                            .quantity(retrieveQuantity(value, donationType))
                             .build());
                 });
         return statisticsResponseDtoArrayList;
     }
 
-    private long retrieveBloodQuantity(EBlood value) {
+    private long retrieveQuantity(EBlood value, String donationType) {
+        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
+        Blood bloodGroupWithRh = bloodMapper.retrieveBloodGroupFromBloodName(value.getStringName());
         return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
-                EDonationType.BLOOD, IS_RELEASED_FALSE, bloodMapper.retrieveBloodGroupFromBloodName(value.getStringName())).stream()
+                eDonationType, IS_RELEASED_FALSE, bloodGroupWithRh).stream()
                 .mapToLong(Donation::getAmount).sum();
     }
 
     @Override
     public UserStatisticsResponseDto getUserDonationsStatistics(Long donorId) {
         var donations = donationRepository.findByAllUserId(donorId);
-
         long plasmaAmount = donations.stream()
                 .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
                 .mapToLong(Donation::getAmount).sum();
