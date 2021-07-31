@@ -8,7 +8,7 @@ import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +18,10 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DonorServiceImpl implements DonorService {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private DonorMapper donorMapper;
+    private final UserRepository userRepository;
+    private final DonorMapper donorMapper;
 
     @Override
     public List<DonorResponseDto> getAllDonors() {

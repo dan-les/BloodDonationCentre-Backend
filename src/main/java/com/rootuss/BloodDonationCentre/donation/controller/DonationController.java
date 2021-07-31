@@ -3,7 +3,7 @@ package com.rootuss.BloodDonationCentre.donation.controller;
 import com.rootuss.BloodDonationCentre.donation.model.*;
 import com.rootuss.BloodDonationCentre.donation.service.DonationService;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -14,9 +14,9 @@ import java.util.List;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping("/api/donation")
+@RequiredArgsConstructor
 public class DonationController {
-    @Autowired
-    private DonationService donationService;
+    private final DonationService donationService;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")

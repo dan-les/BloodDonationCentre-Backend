@@ -11,9 +11,8 @@ import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
-import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +24,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class DonationServiceImpl implements DonationService {
     public static final int INTERVAL_8_WEEKS = 8;
     public static final int INTERVAL_4_WEEKS = 4;
@@ -34,19 +34,12 @@ public class DonationServiceImpl implements DonationService {
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private static final Boolean IS_RELEASED_FALSE = false;
-    @Autowired
-    private DonationRepository donationRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RecipientRepository recipientRepository;
-    @Autowired
-    private DonationMapper donationMapper;
-    @Autowired
-    private DonorMapper donorMapper;
-    @Autowired
-    private BloodMapper bloodMapper;
 
+    private final DonationRepository donationRepository;
+    private final UserRepository userRepository;
+    private final RecipientRepository recipientRepository;
+    private final DonationMapper donationMapper;
+    private final BloodMapper bloodMapper;
 
     @Override
     public List<DonationResponseDto> getDonationsByDonorId(Long donorId) {

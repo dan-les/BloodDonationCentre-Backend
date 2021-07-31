@@ -5,15 +5,15 @@ import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.blood.repository.BloodRepository;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 @Component
+@RequiredArgsConstructor
 public class BloodMapper {
-    @Autowired
-    private BloodRepository bloodRepository;
+    private final BloodRepository bloodRepository;
 
     public Blood retrieveBloodGroupFromBloodName(String bloodName) {
         var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getStringName().equals(bloodName)).findFirst()

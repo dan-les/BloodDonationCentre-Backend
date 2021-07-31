@@ -3,17 +3,16 @@ package com.rootuss.BloodDonationCentre.security;
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
 import com.rootuss.BloodDonationCentre.security.services.UserDetailsImpl;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import java.util.stream.Collectors;
 
 @Component("userSecurity")
+@RequiredArgsConstructor
 public class UserSecurity {
-
-    @Autowired
-    ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
 
     public boolean hasProperUserId(Authentication authentication, Long userId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();

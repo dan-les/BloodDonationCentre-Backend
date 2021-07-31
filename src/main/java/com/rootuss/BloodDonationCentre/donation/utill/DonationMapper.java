@@ -8,16 +8,15 @@ import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class DonationMapper {
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private RecipientRepository recipientRepository;
+    private final UserRepository userRepository;
+    private final RecipientRepository recipientRepository;
 
     public DonationResponseDto mapToDonationResponseDto(Donation donation) {
         return DonationResponseDto.builder()

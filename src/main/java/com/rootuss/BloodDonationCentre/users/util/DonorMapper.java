@@ -4,14 +4,14 @@ import com.rootuss.BloodDonationCentre.blood.utill.BloodMapper;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 
 @Component
+@RequiredArgsConstructor
 public class DonorMapper {
-    @Autowired
-    private BloodMapper bloodMapper;
+    private final BloodMapper bloodMapper;
 
     public DonorResponseDto mapToDonorResponseDto(User user) {
         return DonorResponseDto.builder()

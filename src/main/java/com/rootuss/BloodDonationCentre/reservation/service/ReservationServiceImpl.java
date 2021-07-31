@@ -8,8 +8,7 @@ import com.rootuss.BloodDonationCentre.reservation.model.ReservationRequestDto;
 import com.rootuss.BloodDonationCentre.reservation.model.ReservationResponseDto;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
 import com.rootuss.BloodDonationCentre.reservation.utill.ReservationMapper;
-import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,14 +18,10 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-
+@RequiredArgsConstructor
 public class ReservationServiceImpl implements ReservationService {
-    @Autowired
-    private ReservationRepository reservationRepository;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private ReservationMapper reservationMapper;
+    private final ReservationRepository reservationRepository;
+    private final ReservationMapper reservationMapper;
 
     //więcej niż 2 rezerwacje na jeden termin to dajemy disabled
     private final int maxQuantityOfReservationsInTheSameTime = 2;

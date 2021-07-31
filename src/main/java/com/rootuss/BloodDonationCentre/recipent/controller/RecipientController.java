@@ -3,7 +3,7 @@ package com.rootuss.BloodDonationCentre.recipent.controller;
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
 import com.rootuss.BloodDonationCentre.recipent.model.RecipientRequestDto;
 import com.rootuss.BloodDonationCentre.recipent.service.RecipientService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,9 +13,9 @@ import java.util.List;
 @RestController
 
 @RequestMapping("/api/recipient")
+@RequiredArgsConstructor
 public class RecipientController {
-    @Autowired
-    private RecipientService recipientService;
+    private final RecipientService recipientService;
 
     @GetMapping("/list")
     @PreAuthorize("hasRole('STAFF')")

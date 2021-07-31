@@ -3,16 +3,15 @@ package com.rootuss.BloodDonationCentre.recipent.service;
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
 import com.rootuss.BloodDonationCentre.recipent.model.RecipientRequestDto;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-
+@RequiredArgsConstructor
 public class RecipientServiceImpl implements RecipientService {
-    @Autowired
-    private RecipientRepository recipientRepository;
+    private final RecipientRepository recipientRepository;
 
     @Override
     public List<Recipient> getAllRecipients() {
