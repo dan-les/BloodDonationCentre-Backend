@@ -1,11 +1,15 @@
 package com.rootuss.BloodDonationCentre.users.util;
 
+import com.rootuss.BloodDonationCentre.blood.model.Blood;
+import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.blood.utill.BloodMapper;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import static java.util.Optional.ofNullable;
 
 
 @Component
@@ -14,15 +18,20 @@ public class DonorMapper {
     private final BloodMapper bloodMapper;
 
     public DonorResponseDto mapToDonorResponseDto(User user) {
+        String bloodGroupWithRh = ofNullable(user.getBlood())
+                .map(Blood::getName)
+                .map(EBlood::getStringName)
+                .orElse(null);
+
         return DonorResponseDto.builder()
                 .id(user.getId())
-                .username(user.getUsername() == null ? "" : user.getUsername())
-                .email(user.getEmail() == null ? "" : user.getEmail())
-                .firstName(user.getFirstName() == null ? "" : user.getFirstName())
-                .lastName(user.getLastName() == null ? "" : user.getLastName())
-                .pesel(user.getPesel() == null ? "" : user.getPesel())
-                .bloodGroupWithRh(user.getBlood() == null ? "" : user.getBlood().getName().getStringName())
-                .gender(user.getGender() == null ? "" : user.getGender())
+                .username(ofNullable(user.getUsername()).orElse(null))
+                .email(ofNullable(user.getEmail()).orElse(null))
+                .firstName(ofNullable(user.getFirstName()).orElse(null))
+                .lastName(ofNullable(user.getLastName()).orElse(null))
+                .pesel(ofNullable(user.getPesel()).orElse(null))
+                .bloodGroupWithRh(bloodGroupWithRh)
+                .gender(ofNullable(user.getGender()).orElse(null))
                 .build();
     }
 
