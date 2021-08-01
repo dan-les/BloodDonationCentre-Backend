@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Component("userSecurity")
@@ -25,7 +26,7 @@ public class UserSecurity {
 
     public boolean hasReservationProperUserId(Authentication authentication, Long reservationId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        var userReservationsIds = reservationRepository.findAllByDonorId(userDetails.getId()).stream()
+        List<Long> userReservationsIds = reservationRepository.findAllByDonorId(userDetails.getId()).stream()
                 .map(Reservation::getId)
                 .collect(Collectors.toList());
         if (userReservationsIds.contains(reservationId)) {

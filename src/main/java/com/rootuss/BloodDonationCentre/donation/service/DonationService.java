@@ -16,8 +16,6 @@ public interface DonationService {
 
     DonationResponseDto addDonation(DonationRequestDto donationRequestDto);
 
-    DonationResponseDto putDonation(Long id, DonationRequestDto donorRequestDto);
-
     NextDonationResponseDto getSoonestPossibleDateForNextDonation(String donationType, Long donorId);
 
     List<DonationResponseDto> getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(String donationType, Boolean isReleased, String bloodGroupWithRh);

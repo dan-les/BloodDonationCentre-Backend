@@ -23,4 +23,6 @@ public class Reservation {
     @Enumerated(EnumType.STRING)
     @Column(name = "donation_type")
     private EDonationType donationType;
+    @Column(name = "creation_date")
+    private LocalDate creationDate;
 }

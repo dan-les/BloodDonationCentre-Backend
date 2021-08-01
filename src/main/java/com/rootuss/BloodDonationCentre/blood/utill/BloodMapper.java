@@ -16,10 +16,8 @@ public class BloodMapper {
     private final BloodRepository bloodRepository;
 
     public Blood retrieveBloodGroupFromBloodName(String bloodName) {
-        var bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getStringName().equals(bloodName)).findFirst()
+        EBlood bloodNameEnum = Arrays.stream(EBlood.values()).filter(b -> b.getStringName().equals(bloodName)).findFirst()
                 .orElseThrow(() -> new BloodDonationCentreException(Error.BLOOD_TYPE_NOT_FOUND));
-
-
         return bloodRepository.findByName(bloodNameEnum)
                 .stream()
                 .findFirst()

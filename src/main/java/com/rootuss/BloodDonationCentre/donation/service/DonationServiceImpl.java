@@ -9,6 +9,8 @@ import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
+import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
+import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
@@ -36,6 +38,7 @@ public class DonationServiceImpl implements DonationService {
     private static final Boolean IS_RELEASED_FALSE = false;
 
     private final DonationRepository donationRepository;
+    private final ReservationRepository reservationRepository;
     private final UserRepository userRepository;
     private final RecipientRepository recipientRepository;
     private final DonationMapper donationMapper;
@@ -59,15 +62,9 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public DonationResponseDto addDonation(DonationRequestDto donationRequestDto) {
-        var donation = donationMapper.mapDonationRequestDtoToDonation(donationRequestDto);
+        Donation donation = donationMapper.mapDonationRequestDtoToDonation(donationRequestDto);
         donation = donationRepository.save(donation);
         return donationMapper.mapToDonationResponseDto(donation);
-    }
-
-    @Override
-    public DonationResponseDto putDonation(Long id, DonationRequestDto donorRequestDto) {
-        // TODO
-        return null;
     }
 
     @Override
@@ -75,43 +72,83 @@ public class DonationServiceImpl implements DonationService {
         Optional<User> user = Optional.ofNullable(userRepository.findById(donorId))
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
         EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        return retrieveSoonestPossibleDateForNextDonation(donationRepository.findByUser(user), user, eDonationType);
+        List<Donation> donationsByUser = donationRepository.findByUser(user);
+        List<Reservation> reservationsByUser = reservationRepository.findAllByDonorId(donorId);
+        return retrieveSoonestPossibleDateForNextDonation(donationsByUser, reservationsByUser, user, eDonationType);
 
     }
 
+    /*
+         ---------------------------------------------------
+         WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
+         ---------------------------------------------------
+         pobranie krwi -> kobiety - max 4 razy w roku
+         pobranie krwi -> mężczyźni - max 6 razy w roku
+         ---------------------------------------------------
+         poprzednie pobranie -> kolejne pobranie --- odstęp
+         krew -> krew --- 8 tyg.
+         krew -> osocze --- 4 tyg.
+         osocze -> krew --- 4 tyg.
+         osocze -> osocze --- 2 tyg.
+         ---------------------------------------------------
+     */
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
-            List<Donation> donations, Optional<User> user, EDonationType nextDonationType) {
-        // pobranie krwi -> kobiety - max 4 razy w roku
-        // pobranie krwi -> mężczyźni - max 6 razy w roku
-
-        // poprzednie pobranie -> kolejne pobranie --- odstęp
-        // krew -> krew --- 8 tyg.
-        // krew -> osocze --- 4 tyg.
-        // osocze -> krew --- 4 tyg.
-        // osocze -> osocze --- 2 tyg.
+            List<Donation> donations, List<Reservation> reservations, Optional<User> user, EDonationType nextDonationType) {
         Optional<Donation> lastDonation = donations.stream().findFirst();
-        if (lastDonation.isEmpty()) {
-            return NextDonationResponseDto.builder()
-                    .date(LocalDate.now())
-                    .build();
-        } else {
-            var lastDonationType = lastDonation.get().getDonationType();
-            var lastDonationDate = lastDonation.get().getDate();
+        Optional<Reservation> lastReservation = reservations.stream().findFirst();
+        long bloodDonationsInCurrentYearQuantity = retrieveBloodDonationsInCurrentYearQuantity(donations);
 
-            long bloodDonationsInCurrentYearQuantity = retrieveBloodDonationsInCurrentYearQuantity(donations);
-
-            if (checkMaxDonationsQuantityPerYear(user, nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity))
-                return retrieveNextYearDate(lastDonationDate.getYear() + 1, 1, 1);
-            if (lastDonationType == EDonationType.BLOOD && nextDonationType == EDonationType.BLOOD) {
-                return calculateDateForNextDonation(lastDonationDate, INTERVAL_8_WEEKS);
-            } else if (lastDonationType == EDonationType.BLOOD && nextDonationType == EDonationType.PLASMA) {
-                return calculateDateForNextDonation(lastDonationDate, INTERVAL_4_WEEKS);
-            } else if (lastDonationType == EDonationType.PLASMA && nextDonationType == EDonationType.BLOOD) {
-                return calculateDateForNextDonation(lastDonationDate, INTERVAL_4_WEEKS);
+        if (lastDonation.isPresent()) {
+            EDonationType lastDonationType = lastDonation.get().getDonationType();
+            LocalDate lastDonationDate = lastDonation.get().getDate();
+            if (lastReservation.isPresent()) {
+                return calculateIntervalWhenLastDonationAndLastReservationIsPresent(
+                        user, nextDonationType, lastReservation, bloodDonationsInCurrentYearQuantity, lastDonationType, lastDonationDate);
             } else {
-                return calculateDateForNextDonation(lastDonationDate, INTERVAL_2_WEEKS);
+                return calculateInterval(user, nextDonationType, lastDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity);
+            }
+        } else {
+            if (lastReservation.isPresent()) {
+                EDonationType lastReservationType = lastReservation.get().getDonationType();
+                LocalDate lastReservationDate = lastReservation.get().getDate();
+                return calculateInterval(
+                        user, nextDonationType, lastReservationType, lastReservationDate, bloodDonationsInCurrentYearQuantity);
+            } else {
+                return retrieveDate(LocalDate.now());
             }
         }
+    }
+
+    private NextDonationResponseDto calculateIntervalWhenLastDonationAndLastReservationIsPresent(Optional<User> user, EDonationType nextDonationType, Optional<Reservation> lastReservation, long bloodDonationsInCurrentYearQuantity, EDonationType lastDonationType, LocalDate lastDonationDate) {
+        EDonationType lastReservationType = lastReservation.get().getDonationType();
+        LocalDate lastReservationDate = lastReservation.get().getDate();
+        if (lastDonationDate.isBefore(lastReservationDate)) {
+            return calculateInterval(
+                    user, nextDonationType, lastReservationType, lastReservationDate, bloodDonationsInCurrentYearQuantity);
+        } else {
+            return calculateInterval(user, nextDonationType, lastDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity);
+        }
+    }
+
+    private NextDonationResponseDto calculateInterval(Optional<User> user, EDonationType nextType, EDonationType lastType,
+                                                      LocalDate lastDate, long bloodDonationsInCurrentYearQuantity) {
+        if (checkMaxDonationsQuantityPerYear(user, nextType, lastDate, bloodDonationsInCurrentYearQuantity))
+            return retrieveNextYearDate(lastDate.getYear() + 1, 1, 1);
+        if (lastType == EDonationType.BLOOD && nextType == EDonationType.BLOOD) {
+            return calculateDateForNextDonation(lastDate, INTERVAL_8_WEEKS);
+        } else if (lastType == EDonationType.BLOOD && nextType == EDonationType.PLASMA) {
+            return calculateDateForNextDonation(lastDate, INTERVAL_4_WEEKS);
+        } else if (lastType == EDonationType.PLASMA && nextType == EDonationType.BLOOD) {
+            return calculateDateForNextDonation(lastDate, INTERVAL_4_WEEKS);
+        } else {
+            return calculateDateForNextDonation(lastDate, INTERVAL_2_WEEKS);
+        }
+    }
+
+    private NextDonationResponseDto retrieveDate(LocalDate now) {
+        return NextDonationResponseDto.builder()
+                .date(now)
+                .build();
     }
 
     private long retrieveBloodDonationsInCurrentYearQuantity(List<Donation> donations) {
@@ -138,15 +175,11 @@ public class DonationServiceImpl implements DonationService {
     }
 
     private NextDonationResponseDto retrieveNextYearDate(int year, int month, int day) {
-        return NextDonationResponseDto.builder()
-                .date(LocalDate.of(year, month, day))
-                .build();
+        return retrieveDate(LocalDate.of(year, month, day));
     }
 
     private NextDonationResponseDto calculateDateForNextDonation(LocalDate date, int interval) {
-        return NextDonationResponseDto.builder()
-                .date(date.plusWeeks(interval))
-                .build();
+        return retrieveDate(date.plusWeeks(interval));
     }
 
     @Override
@@ -219,7 +252,7 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public ResponseEntity<MessageResponse> patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
 
-        var donation = donationRepository.findById(recipientChangeRequestDto.getId()).orElseThrow(
+        Donation donation = donationRepository.findById(recipientChangeRequestDto.getId()).orElseThrow(
                 () -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
 
         donation.setId(recipientChangeRequestDto.getId());
@@ -253,7 +286,7 @@ public class DonationServiceImpl implements DonationService {
 
     @Override
     public UserStatisticsResponseDto getUserDonationsStatistics(Long donorId) {
-        var donations = donationRepository.findByAllUserId(donorId);
+        List<Donation> donations = donationRepository.findByAllUserId(donorId);
         long plasmaAmount = donations.stream()
                 .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
                 .mapToLong(Donation::getAmount).sum();
