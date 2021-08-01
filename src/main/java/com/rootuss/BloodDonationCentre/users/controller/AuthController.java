@@ -64,7 +64,6 @@ public class AuthController {
                 roles));
     }
 
-
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
@@ -79,7 +78,6 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        // Create new user's account
         User user = new User(
                 signUpRequest.getUsername(),
                 signUpRequest.getEmail(),
@@ -98,20 +96,17 @@ public class AuthController {
             strRoles.forEach(role -> {
                 switch (role) {
                     case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
+                        Role adminRole = retrieveRole(ERole.ROLE_ADMIN);
                         roles.add(adminRole);
 
                         break;
                     case "staff":
-                        Role staffRole = roleRepository.findByName(ERole.ROLE_STAFF)
-                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
+                        Role staffRole = retrieveRole(ERole.ROLE_STAFF);
                         roles.add(staffRole);
 
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
+                        Role userRole = retrieveRole(ERole.ROLE_USER);
                         roles.add(userRole);
                 }
             });
@@ -121,6 +116,11 @@ public class AuthController {
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User successfully register!"));
+    }
+
+    private Role retrieveRole(ERole roleAdmin) {
+        return roleRepository.findByName(roleAdmin)
+                .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
     }
 
 
