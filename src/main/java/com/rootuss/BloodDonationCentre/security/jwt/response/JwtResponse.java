@@ -1,10 +1,14 @@
-package com.rootuss.BloodDonationCentre.security.jwt;
+package com.rootuss.BloodDonationCentre.security.jwt.response;
+
+import lombok.AllArgsConstructor;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class JwtResponse {
     private String token;
-    private String type = "Bearer";
+    private static String type = "Bearer";
+    private String refreshToken;
     private Long id;
     private String username;
     private String firstName;
@@ -12,15 +16,6 @@ public class JwtResponse {
     private String email;
     private List<String> roles;
 
-    public JwtResponse(String accessToken, Long id, String username, String firstName, String lastName, String email, List<String> roles) {
-        this.token = accessToken;
-        this.id = id;
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.roles = roles;
-    }
 
     public String getAccessToken() {
         return token;
@@ -81,6 +76,14 @@ public class JwtResponse {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getRefreshToken() {
+        return refreshToken;
+    }
+
+    public void setRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
     }
 }
 

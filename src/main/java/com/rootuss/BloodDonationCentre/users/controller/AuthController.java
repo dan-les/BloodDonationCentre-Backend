@@ -3,11 +3,17 @@ package com.rootuss.BloodDonationCentre.users.controller;
 
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.exception.TokenRefreshException;
 import com.rootuss.BloodDonationCentre.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
 import com.rootuss.BloodDonationCentre.roles.repository.RoleRepository;
-import com.rootuss.BloodDonationCentre.security.jwt.JwtResponse;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
+import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
+import com.rootuss.BloodDonationCentre.security.jwt.request.LogOutRequest;
+import com.rootuss.BloodDonationCentre.security.jwt.request.TokenRefreshRequest;
+import com.rootuss.BloodDonationCentre.security.jwt.response.JwtResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.response.TokenRefreshResponse;
+import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
 import com.rootuss.BloodDonationCentre.security.services.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequest;
 import com.rootuss.BloodDonationCentre.users.model.SignupRequest;
@@ -41,6 +47,7 @@ public class AuthController {
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
+    private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
@@ -55,13 +62,38 @@ public class AuthController {
         User user = retrieveUser(userDetails);
         List<String> roles = retrieveRoles(userDetails);
 
-        return ResponseEntity.ok(new JwtResponse(jwt,
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+
+        return ResponseEntity.ok(new JwtResponse(
+                jwt,
+                refreshToken.getToken(),
                 user.getId(),
                 user.getUsername(),
                 user.getFirstName(),
                 user.getLastName(),
                 user.getEmail(),
                 roles));
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+        refreshTokenService.deleteByUserId(logOutRequest.getUserId());
+        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+    }
+
+    @PostMapping("/refreshtoken")
+    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+        String requestRefreshToken = request.getRefreshToken();
+
+        return refreshTokenService.findByToken(requestRefreshToken)
+                .map(refreshTokenService::verifyExpiration)
+                .map(RefreshToken::getUser)
+                .map(user -> {
+                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                })
+                .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
+                        "Refresh token is not in database!"));
     }
 
     @PostMapping("/signup")
