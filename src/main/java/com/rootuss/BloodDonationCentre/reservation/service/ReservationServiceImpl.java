@@ -31,14 +31,23 @@ public class ReservationServiceImpl implements ReservationService {
     @Override
     public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(LocalDate date) {
         List<AvailableHoursForReservationResponseDto> list = new ArrayList<>();
-        for (int i = firstEntry; i <= lastEntry; i++) {
-            if (reservationRepository.getAllByTimeAndDate(LocalTime.of(i, 0), date).size() >= maxQuantityOfReservationsInTheSameTime) {
-                list.add(AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(true).build());
+        for (int hour = firstEntry; hour <= lastEntry; hour++) {
+            if (calculateDisability(date, hour)) {
+                list.add(retrieveAvailableHoursForReservationResponseDto(hour, true));
             } else {
-                list.add(AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(i, 0).toString()).disabled(false).build());
+                list.add(retrieveAvailableHoursForReservationResponseDto(hour, false));
             }
         }
         return list;
+    }
+
+    private boolean calculateDisability(LocalDate date, int i) {
+        return reservationRepository.getAllByTimeAndDate(
+                LocalTime.of(i, 0), date).size() >= maxQuantityOfReservationsInTheSameTime;
+    }
+
+    private AvailableHoursForReservationResponseDto retrieveAvailableHoursForReservationResponseDto(int hour, boolean isDisabled) {
+        return AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(hour, 0).toString()).disabled(isDisabled).build();
     }
 
     @Override

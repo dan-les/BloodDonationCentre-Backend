@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface DonationRepository extends JpaRepository<Donation, Long> {
@@ -18,7 +17,7 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     List<Donation> findAll();
 
     @Query("SELECT d FROM Donation d WHERE d.user = :user ORDER BY d.date DESC")
-    List<Donation> findByUser(Optional<User> user);
+    List<Donation> findByUser(User user);
 
     @Query("SELECT d FROM Donation d WHERE d.user.id = :userId ORDER BY d.date DESC")
     List<Donation> findByAllUserId(Long userId);
