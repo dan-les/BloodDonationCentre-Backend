@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.security.jwt.request;
+package com.rootuss.BloodDonationCentre.security.jwt.model.request;
 
 import lombok.Getter;
 import lombok.Setter;

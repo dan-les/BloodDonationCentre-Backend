@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.security.jwt.response;
+package com.rootuss.BloodDonationCentre.security.jwt.model.response;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -7,14 +7,14 @@ import com.rootuss.BloodDonationCentre.exception.TokenRefreshException;
 import com.rootuss.BloodDonationCentre.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
 import com.rootuss.BloodDonationCentre.roles.repository.RoleRepository;
+import com.rootuss.BloodDonationCentre.security.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
-import com.rootuss.BloodDonationCentre.security.jwt.request.LogOutRequest;
-import com.rootuss.BloodDonationCentre.security.jwt.request.TokenRefreshRequest;
-import com.rootuss.BloodDonationCentre.security.jwt.response.JwtResponse;
-import com.rootuss.BloodDonationCentre.security.jwt.response.TokenRefreshResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequest;
+import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRequest;
+import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
-import com.rootuss.BloodDonationCentre.security.services.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequest;
 import com.rootuss.BloodDonationCentre.users.model.SignupRequest;
 import com.rootuss.BloodDonationCentre.users.model.User;
@@ -81,7 +81,7 @@ public class AuthController {
         return ResponseEntity.ok(new MessageResponse("Log out successful!"));
     }
 
-    @PostMapping("/refreshtoken")
+    @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
         String requestRefreshToken = request.getRefreshToken();
 
@@ -157,13 +157,12 @@ public class AuthController {
 
 
     private User retrieveUser(UserDetailsImpl userDetails) {
-        User user = Optional.ofNullable(userRepository.findById(userDetails.getId()))
+        return Optional.ofNullable(userRepository.findById(userDetails.getId()))
                 .filter(Optional::isPresent)
                 .stream()
                 .findAny()
                 .map(Optional::get)
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
-        return user;
     }
 
     private List<String> retrieveRoles(UserDetailsImpl userDetails) {

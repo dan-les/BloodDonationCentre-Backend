@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.security.jwt.request;
+package com.rootuss.BloodDonationCentre.security.jwt.model.request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +10,6 @@ import javax.validation.constraints.NotBlank;
 public class LoginRequest {
     @NotBlank
     private String username;
-
     @NotBlank
     private String password;
 }

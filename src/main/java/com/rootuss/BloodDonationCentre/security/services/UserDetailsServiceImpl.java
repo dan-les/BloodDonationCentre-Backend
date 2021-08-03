@@ -1,5 +1,6 @@
 package com.rootuss.BloodDonationCentre.security.services;
 
+import com.rootuss.BloodDonationCentre.security.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
-
         return UserDetailsImpl.build(user);
     }
 }
