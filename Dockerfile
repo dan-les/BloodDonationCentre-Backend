@@ -1,7 +1,7 @@
-FROM openjdk:11
-ADD target/BloodDonationCentre-0.0.1-SNAPSHOT.jar .
+FROM openjdk:11.0-jre-slim
+ADD target/BloodDonationCentre-0.0.2-SNAPSHOT.jar .
 EXPOSE 20103
-CMD java -jar BloodDonationCentre-0.0.1-SNAPSHOT.jar
+CMD java -jar BloodDonationCentre-0.0.2-SNAPSHOT.jar
 
 
 #1. mvn clean compile package
@@ -13,3 +13,11 @@ CMD java -jar BloodDonationCentre-0.0.1-SNAPSHOT.jar
 #    eq.
 #    REPOSITORY   TAG         IMAGE ID        CREATED         SIZE
 #    bcd-f        v1          95cfa2254944    4 hours ago     625MB
+
+
+###############################################
+# zapis:
+# docker save -o d:/image.tar bdc:v1
+
+# ładowanie:
+# docker load -i d:/image.tar
