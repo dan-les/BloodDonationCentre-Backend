@@ -27,12 +27,15 @@ public class DonationMapper {
 
     public DonationResponseDto mapToDonationResponseDto(Donation donation) {
         String recipientName = ofNullable(donation.getRecipient())
-                .map(Recipient::getName).orElse(null);
+                .map(Recipient::getName)
+                .orElse(null);
         Long recipientId = ofNullable(donation.getRecipient())
-                .map(Recipient::getId).orElse(null);
+                .map(Recipient::getId)
+                .orElse(null);
         String bloodGroupWithRh = ofNullable(donation.getUser().getBlood())
                 .map(Blood::getName)
-                .map(EBlood::getStringName).orElse(null);
+                .map(EBlood::getStringName)
+                .orElse(null);
         return DonationResponseDto.builder()
                 .id(donation.getId())
                 .date(donation.getDate())

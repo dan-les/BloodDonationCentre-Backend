@@ -24,7 +24,7 @@ public class ReservationMapper {
         User user = userRepository.findById(reservationRequestDto.getDonorId())
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
         LocalDate date = LocalDate.parse(reservationRequestDto.getDate().toString());
-        LocalTime time = LocalTime.parse(reservationRequestDto.getTime().toString());
+        LocalTime time = LocalTime.parse(reservationRequestDto.getTime());
         EDonationType donationType;
         if (reservationRequestDto.getDonationType().equals("plasma")) {
             donationType = EDonationType.PLASMA;

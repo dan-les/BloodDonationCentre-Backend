@@ -57,7 +57,7 @@ public class SwaggerConfig {
                 "REST API - Blood Donation Centre",
                 "API of an application implemented as part of an engineering thesis " +
                         "in the Faculty of Electronics (Computer Science).",
-                "0.1",
+                "3.0",
                 "Terms of service",
                 new Contact("Daniel Leśniewicz", "http://lesniewicz.toadres.pl/", "250996@student.pwr.edu.pl"),
                 "License of API",

@@ -3,6 +3,8 @@ package com.rootuss.BloodDonationCentre.users.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,6 +24,8 @@ import java.util.Set;
                 @UniqueConstraint(columnNames = "email")
         })
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -24,7 +24,7 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationMapper reservationMapper;
 
     //więcej niż 2 rezerwacje na jeden termin to dajemy disabled
-    private final int maxQuantityOfReservationsInTheSameTime = 2;
+    private final int maxQuantityOfReservationsInTheSameTimeSlot = 2;
     private final int firstEntry = 8;
     private final int lastEntry = 19;
 
@@ -43,7 +43,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     private boolean calculateDisability(LocalDate date, int i) {
         return reservationRepository.getAllByTimeAndDate(
-                LocalTime.of(i, 0), date).size() >= maxQuantityOfReservationsInTheSameTime;
+                LocalTime.of(i, 0), date).size() >= maxQuantityOfReservationsInTheSameTimeSlot;
     }
 
     private AvailableHoursForReservationResponseDto retrieveAvailableHoursForReservationResponseDto(int hour, boolean isDisabled) {

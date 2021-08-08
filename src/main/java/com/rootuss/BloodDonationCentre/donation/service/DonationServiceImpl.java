@@ -19,10 +19,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -75,11 +72,9 @@ public class DonationServiceImpl implements DonationService {
         List<Donation> donationsByUser = donationRepository.findByUser(user);
         List<Reservation> reservationsByUser = reservationRepository.findAllByDonorId(donorId);
         return retrieveSoonestPossibleDateForNextDonation(donationsByUser, reservationsByUser, user, eDonationType);
-
     }
 
-    /*
-         ---------------------------------------------------
+         /* ---------------------------------------------------
          WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
          ---------------------------------------------------
          pobranie krwi -> kobiety - max 4 razy w roku
@@ -90,71 +85,96 @@ public class DonationServiceImpl implements DonationService {
          krew -> osocze --- 4 tyg.
          osocze -> krew --- 4 tyg.
          osocze -> osocze --- 2 tyg.
-         ---------------------------------------------------
-     */
+         --------------------------------------------------- */
+
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
             List<Donation> donations, List<Reservation> reservations, User user, EDonationType nextDonationType) {
-        Optional<Donation> lastDonation = donations.stream().findFirst();
-        Optional<Reservation> lastReservation = reservations.stream().findFirst();
+        Optional<Donation> lastDonation = donations.stream().max(Comparator.comparing(Donation::getDate));
+        Optional<Reservation> lastReservation = reservations.stream().max(Comparator.comparing(Reservation::getDate));
+
         long bloodDonationsInCurrentYearQuantity = retrieveBloodDonationsInCurrentYearQuantity(donations);
 
         if (lastDonation.isPresent()) {
             EDonationType lastDonationType = lastDonation.get().getDonationType();
             LocalDate lastDonationDate = lastDonation.get().getDate();
+            LocalDate date;
             if (lastReservation.isPresent()) {
-                return calculateIntervalWhenLastDonationAndLastReservationIsPresent(
+                date = calculateDateWhenLastDonationAndLastReservationIsPresent(
                         user, nextDonationType, lastReservation, bloodDonationsInCurrentYearQuantity,
                         lastDonationType, lastDonationDate);
             } else {
-                return calculateInterval(user, nextDonationType, lastDonationType, lastDonationDate,
-                        bloodDonationsInCurrentYearQuantity);
+                date = calculateDate(nextDonationType, lastDonationType, lastDonationDate, user, bloodDonationsInCurrentYearQuantity);
             }
+            return retrieveResponse(date);
         } else {
             if (lastReservation.isPresent()) {
                 EDonationType lastReservationType = lastReservation.get().getDonationType();
                 LocalDate lastReservationDate = lastReservation.get().getDate();
-                return calculateInterval(
-                        user, nextDonationType, lastReservationType, lastReservationDate, bloodDonationsInCurrentYearQuantity);
+                LocalDate date = calculateDate(nextDonationType, lastReservationType, lastReservationDate, user, bloodDonationsInCurrentYearQuantity);
+                return retrieveResponse(date);
             } else {
-                return retrieveDate(LocalDate.now());
+                return retrieveResponse(LocalDate.now());
             }
         }
     }
 
-    private NextDonationResponseDto calculateIntervalWhenLastDonationAndLastReservationIsPresent(User user,
-                                                                                                 EDonationType nextDonationType,
-                                                                                                 Optional<Reservation> lastReservation,
-                                                                                                 long bloodDonationsInCurrentYearQuantity,
-                                                                                                 EDonationType lastDonationType,
-                                                                                                 LocalDate lastDonationDate) {
+    private LocalDate calculateDateWhenLastDonationAndLastReservationIsPresent(User user,
+                                                                               EDonationType nextDonationType,
+                                                                               Optional<Reservation> lastReservation,
+                                                                               long bloodDonationsInCurrentYearQuantity,
+                                                                               EDonationType lastDonationType,
+                                                                               LocalDate lastDonationDate) {
         EDonationType lastReservationType = lastReservation.get().getDonationType();
         LocalDate lastReservationDate = lastReservation.get().getDate();
+        LocalDate date;
+        var lastDonationOrReservationDate = lastDonationDate.isAfter(lastReservationDate) ? lastDonationDate : lastReservationDate;
         if (lastDonationDate.isBefore(lastReservationDate)) {
-            return calculateInterval(
-                    user, nextDonationType, lastReservationType, lastReservationDate, bloodDonationsInCurrentYearQuantity);
+            date = calculateIntervalAndReturnDate(nextDonationType, lastReservationType, lastReservationDate);
         } else {
-            return calculateInterval(user, nextDonationType, lastDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity);
+            date = calculateIntervalAndReturnDate(nextDonationType, lastDonationType, lastDonationDate);
+        }
+
+        var nextReservationDate = calculateIntervalAndReturnDate(nextDonationType, lastDonationType, lastDonationDate);
+        if (maxDonationsQuantityPerYearIsReached(user, nextDonationType, lastDonationOrReservationDate, bloodDonationsInCurrentYearQuantity)) {
+            return calculateDateWhenMaxDonationsPerYearIsReached(lastDonationOrReservationDate, nextReservationDate);
+        }
+        return date;
+    }
+
+    private LocalDate calculateDateWhenMaxDonationsPerYearIsReached(LocalDate lastDonationOrReservationDate, LocalDate nextReservationDate) {
+        if (nextReservationDate.isBefore(LocalDate.of(lastDonationOrReservationDate.getYear(), 12, 31))) {
+            return LocalDate.of(lastDonationOrReservationDate.getYear() + 1, 1, 1);
+        } else {
+            return nextReservationDate;
         }
     }
 
-    private NextDonationResponseDto calculateInterval(User user, EDonationType nextType, EDonationType lastType,
-                                                      LocalDate lastDate, long bloodDonationsInCurrentYearQuantity) {
-        if (maxDonationsQuantityPerYearIsReached(user, nextType, lastDate, bloodDonationsInCurrentYearQuantity))
-            return retrieveNextYearDate(lastDate.getYear() + 1, 1, 1);
-        if (lastType == EDonationType.BLOOD && nextType == EDonationType.BLOOD) {
+    private LocalDate calculateDate(EDonationType nextDonationType, EDonationType lastType, LocalDate lastDate,
+                                    User user, long bloodDonationsInCurrentYearQuantity) {
+        var nextReservationDate = calculateIntervalAndReturnDate(nextDonationType, lastType, lastDate);
+
+        if (maxDonationsQuantityPerYearIsReached(user, nextDonationType, lastDate, bloodDonationsInCurrentYearQuantity)) {
+            return calculateDateWhenMaxDonationsPerYearIsReached(lastDate, nextReservationDate);
+        } else {
+            return nextReservationDate;
+        }
+    }
+
+    private LocalDate calculateIntervalAndReturnDate(EDonationType nextDonationType, EDonationType lastType, LocalDate lastDate) {
+        if (lastType == EDonationType.BLOOD && nextDonationType == EDonationType.BLOOD) {
             return calculateDateForNextDonation(lastDate, INTERVAL_8_WEEKS);
-        } else if (lastType == EDonationType.BLOOD && nextType == EDonationType.PLASMA) {
+        } else if (lastType == EDonationType.BLOOD && nextDonationType == EDonationType.PLASMA) {
             return calculateDateForNextDonation(lastDate, INTERVAL_4_WEEKS);
-        } else if (lastType == EDonationType.PLASMA && nextType == EDonationType.BLOOD) {
+        } else if (lastType == EDonationType.PLASMA && nextDonationType == EDonationType.BLOOD) {
             return calculateDateForNextDonation(lastDate, INTERVAL_4_WEEKS);
         } else {
             return calculateDateForNextDonation(lastDate, INTERVAL_2_WEEKS);
         }
     }
 
-    private NextDonationResponseDto retrieveDate(LocalDate now) {
+    private NextDonationResponseDto retrieveResponse(LocalDate localDate) {
         return NextDonationResponseDto.builder()
-                .date(now)
+                .date(localDate)
                 .build();
     }
 
@@ -188,11 +208,12 @@ public class DonationServiceImpl implements DonationService {
 
     private boolean donationsLimitPerYearIsReached(EDonationType nextDonationType, LocalDate lastDonationDate,
                                                    long bloodDonationsInCurrentYearQuantity, String userGender,
-                                                   String woman, int maxYearQuantityBloodDonationsWoman) {
+                                                   String gender, int maxYearQuantityBloodDonations) {
         return nextDonationType == EDonationType.BLOOD &&
-                userGender.equals(woman) &&
-                bloodDonationsInCurrentYearQuantity >= maxYearQuantityBloodDonationsWoman &&
-                lastDonationDate.plusWeeks(INTERVAL_4_WEEKS).getYear() == lastDonationDate.getYear();
+                userGender.equals(gender) &&
+                bloodDonationsInCurrentYearQuantity >= maxYearQuantityBloodDonations;
+//                &&
+//                lastDonationDate.plusWeeks(INTERVAL_4_WEEKS).getYear() == lastDonationDate.getYear();
     }
 
     private String determineGenderFromFirstName(User user) {
@@ -206,12 +227,12 @@ public class DonationServiceImpl implements DonationService {
         return userGender;
     }
 
-    private NextDonationResponseDto retrieveNextYearDate(int year, int month, int day) {
-        return retrieveDate(LocalDate.of(year, month, day));
+    private LocalDate retrieveNextYearDate(int year, int month, int day) {
+        return LocalDate.of(year, month, day);
     }
 
-    private NextDonationResponseDto calculateDateForNextDonation(LocalDate date, int interval) {
-        return retrieveDate(date.plusWeeks(interval));
+    private LocalDate calculateDateForNextDonation(LocalDate date, int interval) {
+        return date.plusWeeks(interval);
     }
 
     @Override

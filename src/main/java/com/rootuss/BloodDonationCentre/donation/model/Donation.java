@@ -3,7 +3,10 @@ package com.rootuss.BloodDonationCentre.donation.model;
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.sun.istack.Nullable;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -11,6 +14,9 @@ import java.time.LocalDate;
 @Entity
 @Data
 @Table(name = "donations")
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Donation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
