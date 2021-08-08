@@ -56,7 +56,7 @@ public class SwaggerConfig {
         return new ApiInfo(
                 "REST API - Blood Donation Centre",
                 "API of an application implemented as part of an engineering thesis " +
-                        "in the Faculty of Electronics (Computer Science).",
+                        "(Computer Science Studies - Faculty of Electronics - PWr).",
                 "3.0",
                 "Terms of service",
                 new Contact("Daniel Leśniewicz", "http://lesniewicz.toadres.pl/", "250996@student.pwr.edu.pl"),
