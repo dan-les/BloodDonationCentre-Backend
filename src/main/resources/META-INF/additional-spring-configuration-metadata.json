@@ -1,0 +1,9 @@
+{
+  "properties": [
+    {
+      "name": "log4j.logger.org.hibernate.SQL",
+      "type": "java.lang.String",
+      "description": "Description for log4j.logger.org.hibernate.SQL."
+    }
+  ]
+}

@@ -21,4 +21,6 @@ public interface ReservationService {
     ReservationResponseDto getReservationById(Long id);
 
     List<ReservationResponseDto> getAllReservationsByDonorId(Long donorId);
+
+    void changeReservationStatusAsAppointmentFinished(Long reservationId);
 }

@@ -11,6 +11,7 @@ import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
+import com.rootuss.BloodDonationCentre.reservation.service.ReservationService;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
@@ -36,6 +37,7 @@ public class DonationServiceImpl implements DonationService {
 
     private final DonationRepository donationRepository;
     private final ReservationRepository reservationRepository;
+    private final ReservationService reservationService;
     private final UserRepository userRepository;
     private final RecipientRepository recipientRepository;
     private final DonationMapper donationMapper;
@@ -60,6 +62,7 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public DonationResponseDto addDonation(DonationRequestDto donationRequestDto) {
         Donation donation = donationMapper.mapDonationRequestDtoToDonation(donationRequestDto);
+        setReservationStatusAsAppointmentFinished(donationRequestDto);
         donation = donationRepository.save(donation);
         return donationMapper.mapToDonationResponseDto(donation);
     }
@@ -74,6 +77,7 @@ public class DonationServiceImpl implements DonationService {
         return retrieveSoonestPossibleDateForNextDonation(donationsByUser, reservationsByUser, user, eDonationType);
     }
 
+
          /* ---------------------------------------------------
          WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
          ---------------------------------------------------
@@ -86,7 +90,6 @@ public class DonationServiceImpl implements DonationService {
          osocze -> krew --- 4 tyg.
          osocze -> osocze --- 2 tyg.
          --------------------------------------------------- */
-
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
             List<Donation> donations, List<Reservation> reservations, User user, EDonationType nextDonationType) {
         Optional<Donation> lastDonation = donations.stream().max(Comparator.comparing(Donation::getDate));
@@ -351,5 +354,9 @@ public class DonationServiceImpl implements DonationService {
                 .blood(bloodAmount)
                 .plasma(plasmaAmount)
                 .build();
+    }
+
+    private void setReservationStatusAsAppointmentFinished(DonationRequestDto donationRequestDto) {
+        reservationService.changeReservationStatusAsAppointmentFinished(donationRequestDto.getReservationId());
     }
 }

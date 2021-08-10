@@ -17,6 +17,7 @@ import java.time.LocalTime;
 @Component
 @RequiredArgsConstructor
 public class ReservationMapper {
+    public static final boolean IS_APPOINTMENT_FINISHED_FALSE = false;
     private final UserRepository userRepository;
 
     public Reservation mapReservationRequestDtoToReservation(ReservationRequestDto reservationRequestDto) {
@@ -35,6 +36,7 @@ public class ReservationMapper {
         reservation.setTime(time);
         reservation.setUser(user);
         reservation.setDonationType(donationType);
+        reservation.setIsAppointmentFinished(IS_APPOINTMENT_FINISHED_FALSE);
         return reservation;
     }
 
@@ -48,6 +50,7 @@ public class ReservationMapper {
                 .donorLastName(reservation.getUser().getLastName())
                 .pesel(reservation.getUser().getPesel())
                 .donationType(reservation.getDonationType().getName())
+                .isAppointmentFinished(reservation.getIsAppointmentFinished())
                 .build();
     }
 }

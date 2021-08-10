@@ -18,4 +18,5 @@ public class DonationRequestDto {
     private LocalDate date;
     private Boolean isReleased;
     private Long recipientId;
+    private Long reservationId;
 }

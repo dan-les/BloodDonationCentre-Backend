@@ -89,4 +89,13 @@ public class ReservationServiceImpl implements ReservationService {
                 .map(reservationMapper::mapToReservationResponseDto)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void changeReservationStatusAsAppointmentFinished(Long reservationId) {
+        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
+                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
+
+        reservation.setIsAppointmentFinished(true);
+        reservationRepository.saveAndFlush(reservation);
+    }
 }

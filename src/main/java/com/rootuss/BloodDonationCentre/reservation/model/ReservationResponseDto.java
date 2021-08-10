@@ -14,4 +14,5 @@ public class ReservationResponseDto {
     private String date;
     private String time;
     private String donationType;
+    private Boolean isAppointmentFinished;
 }
