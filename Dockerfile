@@ -1,12 +1,12 @@
 FROM openjdk:11.0-jre-slim
-ADD target/BloodDonationCentre-0.0.2-SNAPSHOT.jar .
+ADD target/BloodDonationCentre-0.0.3-SNAPSHOT.jar .
 EXPOSE 20103
-CMD java -jar BloodDonationCentre-0.0.2-SNAPSHOT.jar
+CMD java -jar BloodDonationCentre-0.0.3-SNAPSHOT.jar
 
 
 #1. mvn clean compile package
 #    to generate .jar file
-#2. docker build -f Dockerfile -t bdc:v1 .
+#2. docker build -f Dockerfile -t spring-bdc:v3 .
 #3. docker images
 #4. docker run -p 20103:8080 95c
 #    95c - first 3 chars of IMAGE ID
@@ -18,7 +18,7 @@ CMD java -jar BloodDonationCentre-0.0.2-SNAPSHOT.jar
 
 ###############################################
 # zapis:
-# docker save -o d:/image.tar bdc:v1
+# docker save -o d:/spring-bdc-v3.tar spring-bdc:v3
 
 # ładowanie:
 # docker load -i d:/image.tar

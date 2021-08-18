@@ -52,6 +52,7 @@ public class User {
     private String firstName;
     @Column(name = "last_name")
     private String lastName;
+    @Size(max = 11)
     private String pesel;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "blood_id")
