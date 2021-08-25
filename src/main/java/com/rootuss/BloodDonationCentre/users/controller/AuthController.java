@@ -15,8 +15,8 @@ import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRe
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtResponse;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
-import com.rootuss.BloodDonationCentre.users.model.LoginRequest;
-import com.rootuss.BloodDonationCentre.users.model.SignupRequest;
+import com.rootuss.BloodDonationCentre.users.model.LoginRequestDto;
+import com.rootuss.BloodDonationCentre.users.model.SignupRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
@@ -50,7 +50,7 @@ public class AuthController {
     private final RefreshTokenService refreshTokenService;
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
@@ -97,7 +97,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
+    public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) {
         if (userRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()

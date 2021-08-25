@@ -3,10 +3,7 @@ package com.rootuss.BloodDonationCentre.users.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.roles.model.Role;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -25,6 +22,7 @@ import java.util.Set;
         })
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class User {
     @Id
@@ -58,9 +56,6 @@ public class User {
     @JoinColumn(name = "blood_id")
     private Blood blood;
     private String gender;
-
-    public User() {
-    }
 
     public User(String username, String email, String password, String firstName, String lastName) {
         this.username = username;

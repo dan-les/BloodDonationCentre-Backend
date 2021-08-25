@@ -9,7 +9,7 @@ import java.util.Optional;
 public interface DonorService {
     List<DonorResponseDto> getAllDonors();
 
-    Optional<DonorResponseDto> loadUserById(Long Id);
+    Optional<DonorResponseDto> loadDonorById(Long Id);
 
     void deleteById(Long id);
 

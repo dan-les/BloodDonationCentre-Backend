@@ -29,7 +29,7 @@ public class DonorController {
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #id)")
     public Optional<DonorResponseDto> getDonorById(@PathVariable Long id) {
-        return donorService.loadUserById(id);
+        return donorService.loadDonorById(id);
     }
 
     @PreAuthorize("hasRole('STAFF')")

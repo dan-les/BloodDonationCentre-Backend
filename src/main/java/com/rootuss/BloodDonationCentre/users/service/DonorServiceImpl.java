@@ -31,17 +31,9 @@ public class DonorServiceImpl implements DonorService {
                 .collect(Collectors.toList());
     }
 
-//    @Override
-//    public DonorResponseDto addDonor(DonorRequestDto donorRequestDto) {
-//        User user = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
-//
-//        userRepository.save(user);
-//        return donorMapper.mapToDonorResponseDto(user);
-//    }
-
     @Override
     @Transactional
-    public Optional<DonorResponseDto> loadUserById(Long Id) throws UsernameNotFoundException {
+    public Optional<DonorResponseDto> loadDonorById(Long Id) throws UsernameNotFoundException {
         return Optional.ofNullable(userRepository.findById(Id))
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND))
                 .map(donorMapper::mapToDonorResponseDto);
@@ -49,16 +41,13 @@ public class DonorServiceImpl implements DonorService {
 
     @Override
     public void deleteById(Long id) {
-        userRepository.findById(id)
-                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
+        retrieveUser(id);
         userRepository.deleteById(id);
     }
 
     @Override
     public DonorResponseDto putDonor(Long id, DonorRequestDto donorRequestDto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
-
+        User user = retrieveUser(id);
         User userRequest = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
 
         user.setUsername(userRequest.getUsername());
@@ -71,5 +60,10 @@ public class DonorServiceImpl implements DonorService {
 
         user = userRepository.saveAndFlush(user);
         return donorMapper.mapToDonorResponseDto(user);
+    }
+
+    private User retrieveUser(Long id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
     }
 }

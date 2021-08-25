@@ -73,13 +73,14 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void deleteById(Long id) {
+        retrieveReservationById(id);
         reservationRepository.deleteById(id);
     }
 
+
     @Override
     public ReservationResponseDto getReservationById(Long id) {
-        Reservation reservation = reservationRepository.findById(id).orElseThrow(
-                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
+        Reservation reservation = retrieveReservationById(id);
         return reservationMapper.mapToReservationResponseDto(reservation);
     }
 
@@ -92,10 +93,13 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public void changeReservationStatusAsAppointmentFinished(Long reservationId) {
-        Reservation reservation = reservationRepository.findById(reservationId).orElseThrow(
-                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
-
+        Reservation reservation = retrieveReservationById(reservationId);
         reservation.setIsAppointmentFinished(true);
         reservationRepository.saveAndFlush(reservation);
+    }
+
+    private Reservation retrieveReservationById(Long id) {
+        return reservationRepository.findById(id).orElseThrow(
+                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
     }
 }
