@@ -2,6 +2,8 @@ package com.rootuss.BloodDonationCentre.users.service;
 
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
+import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,6 +24,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DonorServiceImpl implements DonorService {
     private final UserRepository userRepository;
+    private final ReservationRepository reservationRepository;
     private final DonorMapper donorMapper;
 
     @Override
@@ -41,8 +45,10 @@ public class DonorServiceImpl implements DonorService {
 
     @Override
     public void deleteById(Long id) {
-        retrieveUser(id);
-        userRepository.deleteById(id);
+        User user = retrieveUser(id);
+        user.getUserDetails().setEnabled(false);
+        userRepository.saveAndFlush(user);
+        deleteFutureReservations(id);
     }
 
     @Override
@@ -65,5 +71,19 @@ public class DonorServiceImpl implements DonorService {
     private User retrieveUser(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
+    }
+
+    private void deleteFutureReservations(Long id) {
+        reservationRepository.findAllByDonorId(id).stream()
+                .filter(this::isFutureReservation)
+                .forEach(reservationRepository::delete);
+    }
+
+    private boolean isFutureReservation(Reservation reservation) {
+        if (reservation.getDate().isAfter(LocalDate.now())) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }

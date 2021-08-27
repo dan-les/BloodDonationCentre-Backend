@@ -177,7 +177,6 @@ public class AuthController {
                 .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
     }
 
-
     private User retrieveUser(UserDetailsImpl userDetails) {
         return Optional.ofNullable(userRepository.findById(userDetails.getId()))
                 .filter(Optional::isPresent)

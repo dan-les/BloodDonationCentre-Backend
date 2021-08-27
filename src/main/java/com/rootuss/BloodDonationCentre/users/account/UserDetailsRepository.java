@@ -11,6 +11,4 @@ public interface UserDetailsRepository extends JpaRepository<UserDetailsImpl, Lo
     Optional<UserDetailsImpl> findByUsername(String username);
 
     Boolean existsByUsername(String username);
-
-
 }

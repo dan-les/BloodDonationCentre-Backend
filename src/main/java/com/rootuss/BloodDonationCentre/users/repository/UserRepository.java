@@ -16,7 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findById(Long id);
 
-    @Query("SELECT distinct u FROM User u JOIN u.userDetails ud JOIN ud.roles r WHERE r.name =:roleName")
+    @Query("SELECT distinct u FROM User u JOIN u.userDetails ud JOIN ud.roles r " +
+            "WHERE r.name =:roleName AND u.userDetails.enabled = true")
     List<User> findAllDonors(ERole roleName);
 
     void deleteById(Long id);
