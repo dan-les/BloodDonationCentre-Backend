@@ -10,13 +10,11 @@ public class DonationServiceImplTestSupport {
     static Optional<User> createUserMan() {
         return Optional.ofNullable(User.builder()
                 .id(1L)
-                .username("AdamKowalski123")
                 .firstName("Adam")
                 .lastName("Kowalski")
                 .blood(new Blood(EBlood.GROUP_AB_RH_MINUS))
                 .email("adam.kowalski@gmail.com")
                 .gender("M")
-                .password("password123")
                 .pesel("99111203216")
                 .build());
     }
@@ -24,13 +22,11 @@ public class DonationServiceImplTestSupport {
     static Optional<User> createUserWoman() {
         return Optional.ofNullable(User.builder()
                 .id(1L)
-                .username("monkow123")
                 .firstName("Monika")
                 .lastName("Kowalska")
                 .blood(new Blood(EBlood.GROUP_AB_RH_MINUS))
                 .email("m.kowalska@gmail.com")
                 .gender("K")
-                .password("password123")
                 .pesel("99111203216")
                 .build());
     }

@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.roles.model;
+package com.rootuss.BloodDonationCentre.users.roles.model;
 
 public enum ERole {
     ROLE_USER,

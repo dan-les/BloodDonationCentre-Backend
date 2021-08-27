@@ -1,6 +1,6 @@
 package com.rootuss.BloodDonationCentre.security.jwt;
 
-import com.rootuss.BloodDonationCentre.security.UserDetailsImpl;
+import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

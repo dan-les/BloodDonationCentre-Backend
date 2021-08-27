@@ -2,11 +2,11 @@ package com.rootuss.BloodDonationCentre.users.service;
 
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
-import com.rootuss.BloodDonationCentre.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
+import com.rootuss.BloodDonationCentre.users.roles.model.ERole;
 import com.rootuss.BloodDonationCentre.users.util.DonorMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -50,7 +50,7 @@ public class DonorServiceImpl implements DonorService {
         User user = retrieveUser(id);
         User userRequest = donorMapper.mapDonorRequestDtoToDonor(donorRequestDto);
 
-        user.setUsername(userRequest.getUsername());
+        user.getUserDetails().setUsername(userRequest.getUserDetails().getUsername());
         user.setFirstName(userRequest.getFirstName());
         user.setLastName(userRequest.getLastName());
         user.setBlood(userRequest.getBlood());

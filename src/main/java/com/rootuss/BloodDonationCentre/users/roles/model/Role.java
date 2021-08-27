@@ -1,4 +1,4 @@
-package com.rootuss.BloodDonationCentre.roles.model;
+package com.rootuss.BloodDonationCentre.users.roles.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +23,4 @@ public class Role {
     public Role(ERole name) {
         this.name = name;
     }
-
-
 }

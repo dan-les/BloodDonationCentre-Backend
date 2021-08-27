@@ -25,7 +25,7 @@ public class DonorMapper {
 
         return DonorResponseDto.builder()
                 .id(user.getId())
-                .username(ofNullable(user.getUsername()).orElse(null))
+                .username(ofNullable(user.getUserDetails().getUsername()).orElse(null))
                 .email(ofNullable(user.getEmail()).orElse(null))
                 .firstName(ofNullable(user.getFirstName()).orElse(null))
                 .lastName(ofNullable(user.getLastName()).orElse(null))
@@ -42,7 +42,7 @@ public class DonorMapper {
         user.setPesel(donorRequestDto.getPesel());
         user.setBlood(bloodMapper.retrieveBloodGroupFromBloodName(donorRequestDto.getBloodGroupWithRh()));
         user.setEmail(donorRequestDto.getEmail());
-        user.setUsername(donorRequestDto.getUsername());
+        user.getUserDetails().setUsername(donorRequestDto.getUsername());
         user.setGender(donorRequestDto.getGender());
         return user;
     }

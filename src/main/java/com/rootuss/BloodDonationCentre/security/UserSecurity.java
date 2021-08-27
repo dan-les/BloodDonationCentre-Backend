@@ -2,6 +2,7 @@ package com.rootuss.BloodDonationCentre.security;
 
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
+import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;

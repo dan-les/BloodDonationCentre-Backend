@@ -1,8 +1,8 @@
-package com.rootuss.BloodDonationCentre.roles.repository;
+package com.rootuss.BloodDonationCentre.users.roles.repository;
 
 
-import com.rootuss.BloodDonationCentre.roles.model.ERole;
-import com.rootuss.BloodDonationCentre.roles.model.Role;
+import com.rootuss.BloodDonationCentre.users.roles.model.ERole;
+import com.rootuss.BloodDonationCentre.users.roles.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

@@ -4,10 +4,6 @@ package com.rootuss.BloodDonationCentre.users.controller;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.exception.TokenRefreshException;
-import com.rootuss.BloodDonationCentre.roles.model.ERole;
-import com.rootuss.BloodDonationCentre.roles.model.Role;
-import com.rootuss.BloodDonationCentre.roles.repository.RoleRepository;
-import com.rootuss.BloodDonationCentre.security.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
 import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequest;
@@ -15,10 +11,15 @@ import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRe
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtResponse;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
+import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
+import com.rootuss.BloodDonationCentre.users.account.UserDetailsRepository;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.SignupRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
+import com.rootuss.BloodDonationCentre.users.roles.model.ERole;
+import com.rootuss.BloodDonationCentre.users.roles.model.Role;
+import com.rootuss.BloodDonationCentre.users.roles.repository.RoleRepository;
 import com.rootuss.BloodDonationCentre.utill.MessageResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -44,6 +45,7 @@ import java.util.stream.Collectors;
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
+    private final UserDetailsRepository userDetailsRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
     private final JwtUtils jwtUtils;
@@ -51,7 +53,6 @@ public class AuthController {
 
     @PostMapping("/signin")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequestDto loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
@@ -64,15 +65,18 @@ public class AuthController {
 
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
 
-        return ResponseEntity.ok(new JwtResponse(
-                jwt,
-                refreshToken.getToken(),
-                user.getId(),
-                user.getUsername(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                roles));
+        return ResponseEntity.ok(
+                new JwtResponse(
+                        jwt,
+                        refreshToken.getToken(),
+                        user.getId(),
+                        user.getUserDetails().getUsername(),
+                        user.getFirstName(),
+                        user.getLastName(),
+                        user.getEmail(),
+                        roles
+                )
+        );
     }
 
     @PostMapping("/logout")
@@ -89,7 +93,7 @@ public class AuthController {
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
-                    String token = jwtUtils.generateTokenFromUsername(user.getUsername());
+                    String token = jwtUtils.generateTokenFromUsername(user.getUserDetails().getUsername());
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
@@ -98,7 +102,7 @@ public class AuthController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) {
-        if (userRepository.existsByUsername(signUpRequest.getUsername())) {
+        if (userDetailsRepository.existsByUsername(signUpRequest.getUsername())) {
             return ResponseEntity
                     .badRequest()
                     .body(new MessageResponse("Error: Username is already taken!"));
@@ -110,13 +114,7 @@ public class AuthController {
                     .body(new MessageResponse("Error: Email is already in use!"));
         }
 
-        User user = new User(
-                signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()),
-                signUpRequest.getFirstName(),
-                signUpRequest.getLastName());
-
+        User user = retrieveUser(signUpRequest);
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
@@ -144,10 +142,34 @@ public class AuthController {
             });
         }
 
-        user.setRoles(roles);
+        user.getUserDetails().setRoles(roles);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User successfully register!"));
+    }
+
+    private User retrieveUser(SignupRequestDto signUpRequest) {
+        User user = new User(
+                null,
+                signUpRequest.getEmail(),
+                signUpRequest.getFirstName(),
+                signUpRequest.getLastName(),
+                null,
+                null,
+                null,
+                retrieveUserDetails(signUpRequest));
+        return user;
+    }
+
+    private UserDetailsImpl retrieveUserDetails(SignupRequestDto signUpRequest) {
+        UserDetailsImpl userDetails = new UserDetailsImpl();
+        userDetails.setAccountNonExpired(true);
+        userDetails.setAccountNonLocked(true);
+        userDetails.setCredentialsNonExpired(true);
+        userDetails.setEnabled(true);
+        userDetails.setPassword(encoder.encode(signUpRequest.getPassword()));
+        userDetails.setUsername(signUpRequest.getUsername());
+        return userDetails;
     }
 
     private Role retrieveRole(ERole roleAdmin) {
