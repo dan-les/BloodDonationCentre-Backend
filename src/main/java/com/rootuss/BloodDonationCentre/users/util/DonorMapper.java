@@ -3,6 +3,7 @@ package com.rootuss.BloodDonationCentre.users.util;
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.blood.utill.BloodMapper;
+import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.model.DonorRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.DonorResponseDto;
 import com.rootuss.BloodDonationCentre.users.model.User;
@@ -37,13 +38,16 @@ public class DonorMapper {
 
     public User mapDonorRequestDtoToDonor(DonorRequestDto donorRequestDto) {
         User user = new User();
+        UserDetailsImpl userDetails = new UserDetailsImpl();
+
         user.setFirstName(donorRequestDto.getFirstName());
         user.setLastName(donorRequestDto.getLastName());
         user.setPesel(donorRequestDto.getPesel());
         user.setBlood(bloodMapper.retrieveBloodGroupFromBloodName(donorRequestDto.getBloodGroupWithRh()));
         user.setEmail(donorRequestDto.getEmail());
-        user.getUserDetails().setUsername(donorRequestDto.getUsername());
         user.setGender(donorRequestDto.getGender());
+        userDetails.setUsername(donorRequestDto.getUsername());
+        user.setUserDetails(userDetails);
         return user;
     }
 }
