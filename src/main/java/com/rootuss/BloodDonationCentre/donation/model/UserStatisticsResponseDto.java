@@ -6,6 +6,6 @@ import lombok.Getter;
 @Getter
 @Builder
 public class UserStatisticsResponseDto {
-    Long blood;
-    Long plasma;
+    private Long blood;
+    private Long plasma;
 }

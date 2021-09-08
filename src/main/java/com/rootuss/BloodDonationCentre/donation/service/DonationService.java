@@ -9,7 +9,6 @@ import java.util.List;
 
 public interface DonationService {
 
-
     List<DonationResponseDto> getDonationsByDonorId(Long donorId);
 
     List<DonationResponseDto> getAllDonations();

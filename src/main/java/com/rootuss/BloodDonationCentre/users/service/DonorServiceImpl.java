@@ -80,10 +80,6 @@ public class DonorServiceImpl implements DonorService {
     }
 
     private boolean isFutureReservation(Reservation reservation) {
-        if (reservation.getDate().isAfter(LocalDate.now())) {
-            return true;
-        } else {
-            return false;
-        }
+        return reservation.getDate().isAfter(LocalDate.now());
     }
 }

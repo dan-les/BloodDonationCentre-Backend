@@ -34,6 +34,7 @@ public class DonationServiceImpl implements DonationService {
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
     public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private static final Boolean IS_RELEASED_FALSE = false;
+    public static final String DONATION_PATCHED_SUCCESSFULLY = "Donation patched successfully";
 
     private final DonationRepository donationRepository;
     private final ReservationRepository reservationRepository;
@@ -77,8 +78,7 @@ public class DonationServiceImpl implements DonationService {
         return retrieveSoonestPossibleDateForNextDonation(donationsByUser, reservationsByUser, user, eDonationType);
     }
 
-
-         /* ---------------------------------------------------
+    /**
          WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
          ---------------------------------------------------
          pobranie krwi -> kobiety - max 4 razy w roku
@@ -89,7 +89,7 @@ public class DonationServiceImpl implements DonationService {
          krew -> osocze --- 4 tyg.
          osocze -> krew --- 4 tyg.
          osocze -> osocze --- 2 tyg.
-         --------------------------------------------------- */
+     */
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
             List<Donation> donations, List<Reservation> reservations, User user, EDonationType nextDonationType) {
         Optional<Donation> lastDonation = donations.stream().max(Comparator.comparing(Donation::getDate));
@@ -198,25 +198,22 @@ public class DonationServiceImpl implements DonationService {
             userGender = user.getGender();
         }
 
-        if (donationsLimitPerYearIsReached(nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity,
+        if (bloodDonationsLimitPerYearIsReached(nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity,
                 userGender, WOMAN, MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN)) {
             return true;
         }
-        if (donationsLimitPerYearIsReached(nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity,
+        if (bloodDonationsLimitPerYearIsReached(nextDonationType, lastDonationDate, bloodDonationsInCurrentYearQuantity,
                 userGender, MAN, MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN)) {
             return true;
         }
         return false;
     }
 
-    private boolean donationsLimitPerYearIsReached(EDonationType nextDonationType, LocalDate lastDonationDate,
-                                                   long bloodDonationsInCurrentYearQuantity, String userGender,
-                                                   String gender, int maxYearQuantityBloodDonations) {
-        return nextDonationType == EDonationType.BLOOD &&
-                userGender.equals(gender) &&
+    private boolean bloodDonationsLimitPerYearIsReached(EDonationType nextDonationType, LocalDate lastDonationDate,
+                                                        long bloodDonationsInCurrentYearQuantity, String userGender,
+                                                        String gender, int maxYearQuantityBloodDonations) {
+        return nextDonationType == EDonationType.BLOOD && userGender.equals(gender) &&
                 bloodDonationsInCurrentYearQuantity >= maxYearQuantityBloodDonations;
-//                &&
-//                lastDonationDate.plusWeeks(INTERVAL_4_WEEKS).getYear() == lastDonationDate.getYear();
     }
 
     private String determineGenderFromFirstName(User user) {
@@ -228,10 +225,6 @@ public class DonationServiceImpl implements DonationService {
             userGender = MAN;
         }
         return userGender;
-    }
-
-    private LocalDate retrieveNextYearDate(int year, int month, int day) {
-        return LocalDate.of(year, month, day);
     }
 
     private LocalDate calculateDateForNextDonation(LocalDate date, int interval) {
@@ -316,7 +309,7 @@ public class DonationServiceImpl implements DonationService {
         donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId()).orElseThrow(
                 () -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
         donationRepository.save(donation);
-        return ResponseEntity.ok(new MessageResponse("Donation patch successfully"));
+        return ResponseEntity.ok(new MessageResponse(DONATION_PATCHED_SUCCESSFULLY));
     }
 
     @Override

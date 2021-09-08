@@ -20,6 +20,7 @@ import java.util.List;
 @RequestMapping("/api/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
+    public static final String RESERVATION_DELETE_SUCCESSFULLY = "Reservation delete successfully";
     private final ReservationService reservationService;
 
     @GetMapping("/available-hours/list")
@@ -47,16 +48,16 @@ public class ReservationController {
     }
 
     @GetMapping(value = "list/donor/{donorId}")
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #donorId)")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #donorId)")
     public List<ReservationResponseDto> getAllReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);
     }
 
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasReservationProperUserId(authentication, #id)")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserDeleteOwnReservation(authentication, #id)")
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<MessageResponse> deleteReservation(@PathVariable Long id) {
         reservationService.deleteById(id);
-        return ResponseEntity.ok(new MessageResponse("Reservation delete successfully"));
+        return ResponseEntity.ok(new MessageResponse(RESERVATION_DELETE_SUCCESSFULLY));
     }
 
     @PreAuthorize("hasRole('STAFF')")

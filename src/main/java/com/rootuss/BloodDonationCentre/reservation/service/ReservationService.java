@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface ReservationService {
+
     List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(LocalDate date);
 
     ReservationResponseDto addReservation(ReservationRequestDto reservationRequestDto);

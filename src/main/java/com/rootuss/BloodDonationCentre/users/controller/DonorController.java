@@ -18,6 +18,7 @@ import java.util.Optional;
 @RequestMapping("/api/donor")
 @RequiredArgsConstructor
 public class DonorController {
+    public static final String DONOR_DELETE_SUCCESSFULLY = "Donor delete successfully";
     private final DonorService donorService;
 
     @GetMapping("/list")
@@ -27,7 +28,7 @@ public class DonorController {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.hasProperUserId(authentication, #id)")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #id)")
     public Optional<DonorResponseDto> getDonorById(@PathVariable Long id) {
         return donorService.loadDonorById(id);
     }
@@ -36,7 +37,7 @@ public class DonorController {
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<MessageResponse> deleteDonor(@PathVariable Long id) {
         donorService.deleteById(id);
-        return ResponseEntity.ok(new MessageResponse("Donor delete successfully"));
+        return ResponseEntity.ok(new MessageResponse(DONOR_DELETE_SUCCESSFULLY));
     }
 
     @PreAuthorize("hasRole('STAFF')")

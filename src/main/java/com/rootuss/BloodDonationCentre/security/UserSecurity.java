@@ -15,24 +15,16 @@ import java.util.stream.Collectors;
 public class UserSecurity {
     private final ReservationRepository reservationRepository;
 
-    public boolean hasProperUserId(Authentication authentication, Long userId) {
+    public boolean isLoggedUserAbleToRetrieveReservationsByPassedDonorId(Authentication authentication, Long userId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        if (userId == userDetails.getId()) {
-            return true;
-        } else {
-            return false;
-        }
+        return userId.equals(userDetails.getId());
     }
 
-    public boolean hasReservationProperUserId(Authentication authentication, Long reservationId) {
+    public boolean isLoggedUserDeleteOwnReservation(Authentication authentication, Long reservationId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<Long> userReservationsIds = reservationRepository.findAllByDonorId(userDetails.getId()).stream()
                 .map(Reservation::getId)
                 .collect(Collectors.toList());
-        if (userReservationsIds.contains(reservationId)) {
-            return true;
-        } else {
-            return false;
-        }
+        return userReservationsIds.contains(reservationId);
     }
 }

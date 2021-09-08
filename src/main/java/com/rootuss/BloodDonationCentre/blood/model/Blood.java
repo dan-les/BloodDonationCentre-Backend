@@ -23,6 +23,4 @@ public class Blood {
     public Blood(EBlood name) {
         this.name = name;
     }
-
-
 }

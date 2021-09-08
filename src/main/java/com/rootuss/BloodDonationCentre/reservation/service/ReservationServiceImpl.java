@@ -23,7 +23,6 @@ public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
 
-    //więcej niż 2 rezerwacje na jeden termin to dajemy disabled
     private final int maxQuantityOfReservationsInTheSameTimeSlot = 2;
     private final int firstEntry = 8;
     private final int lastEntry = 19;

@@ -83,7 +83,7 @@ public class DonationController {
     }
 
     @GetMapping("/donor/{donorId}/statistics")
-    @PreAuthorize("@userSecurity.hasProperUserId(authentication, #donorId)")
+    @PreAuthorize("@userSecurity.loggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #donorId)")
     public UserStatisticsResponseDto getUserDonationsStatistics(@PathVariable Long donorId) {
         return donationService.getUserDonationsStatistics(donorId);
     }

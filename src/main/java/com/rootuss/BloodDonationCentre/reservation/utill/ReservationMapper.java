@@ -17,7 +17,8 @@ import java.time.LocalTime;
 @Component
 @RequiredArgsConstructor
 public class ReservationMapper {
-    public static final boolean IS_APPOINTMENT_FINISHED_FALSE = false;
+    public static final boolean APPOINTMENT_NOT_FINISHED = false;
+    public static final String PLASMA = "plasma";
     private final UserRepository userRepository;
 
     public Reservation mapReservationRequestDtoToReservation(ReservationRequestDto reservationRequestDto) {
@@ -27,7 +28,7 @@ public class ReservationMapper {
         LocalDate date = LocalDate.parse(reservationRequestDto.getDate().toString());
         LocalTime time = LocalTime.parse(reservationRequestDto.getTime());
         EDonationType donationType;
-        if (reservationRequestDto.getDonationType().equals("plasma")) {
+        if (reservationRequestDto.getDonationType().equals(PLASMA)) {
             donationType = EDonationType.PLASMA;
         } else {
             donationType = EDonationType.BLOOD;
@@ -36,7 +37,7 @@ public class ReservationMapper {
         reservation.setTime(time);
         reservation.setUser(user);
         reservation.setDonationType(donationType);
-        reservation.setIsAppointmentFinished(IS_APPOINTMENT_FINISHED_FALSE);
+        reservation.setIsAppointmentFinished(APPOINTMENT_NOT_FINISHED);
         return reservation;
     }
 

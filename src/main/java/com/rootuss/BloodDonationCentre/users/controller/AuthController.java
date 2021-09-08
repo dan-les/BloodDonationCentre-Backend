@@ -43,6 +43,10 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
+    public static final String ADMIN = "admin";
+    public static final String STAFF = "staff";
+    public static final String USER_SUCCESSFULLY_REGISTER = "User successfully register!";
+    public static final String LOG_OUT_SUCCESSFUL = "Log out successful!";
     private final AuthenticationManager authenticationManager;
     private final UserRepository userRepository;
     private final UserDetailsRepository userDetailsRepository;
@@ -82,7 +86,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
-        return ResponseEntity.ok(new MessageResponse("Log out successful!"));
+        return ResponseEntity.ok(new MessageResponse(LOG_OUT_SUCCESSFUL));
     }
 
     @PostMapping("/refresh-token")
@@ -97,21 +101,17 @@ public class AuthController {
                     return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
-                        "Refresh token is not in database!"));
+                        Error.REFRESH_TOKEN_IS_NOT_IN_DATABASE.getMessage()));
     }
 
     @PostMapping("/signup")
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequestDto signUpRequest) {
         if (userDetailsRepository.existsByUsername(signUpRequest.getUsername())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Username is already taken!"));
+            throw new BloodDonationCentreException(Error.USERNAME_IS_ALREADY_TAKEN);
         }
 
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(new MessageResponse("Error: Email is already in use!"));
+            throw new BloodDonationCentreException(Error.EMAIL_IS_ALREADY_IN_USE);
         }
 
         User user = retrieveUser(signUpRequest);
@@ -120,17 +120,17 @@ public class AuthController {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new BloodDonationCentreException(Error.ROLE_NOT_FOUND));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "admin":
+                    case ADMIN:
                         Role adminRole = retrieveRole(ERole.ROLE_ADMIN);
                         roles.add(adminRole);
 
                         break;
-                    case "staff":
+                    case STAFF:
                         Role staffRole = retrieveRole(ERole.ROLE_STAFF);
                         roles.add(staffRole);
 
@@ -145,7 +145,7 @@ public class AuthController {
         user.getUserDetails().setRoles(roles);
         userRepository.save(user);
 
-        return ResponseEntity.ok(new MessageResponse("User successfully register!"));
+        return ResponseEntity.ok(new MessageResponse(USER_SUCCESSFULLY_REGISTER));
     }
 
     private User retrieveUser(SignupRequestDto signUpRequest) {
