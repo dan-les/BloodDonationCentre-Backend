@@ -6,7 +6,7 @@ CMD java -jar BloodDonationCentre-0.0.4-SNAPSHOT.jar
 
 # 1. mvn clean compile package
 #     to generate .jar file
-# 2. docker build -f Dockerfile -t spring-bdc:v3 .
+# 2. docker build -f Dockerfile -t spring-bdc:v4 .
 # 3. docker images
 # 4. docker run -p 20103:8080 95c
 #     95c - first 3 chars of IMAGE ID
