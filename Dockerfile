@@ -14,7 +14,7 @@ CMD java -jar BloodDonationCentre-0.0.4-SNAPSHOT.jar
 #     REPOSITORY   TAG         IMAGE ID        CREATED         SIZE
 #     bcd-f        v1          95cfa2254944    4 hours ago     625MB
 
-#docker run -itd -p 20103:8080 bdc:v4
+# docker run -itd -p 20103:8080 bdc:v4
 
 # docker save -o d:/spring-bdc-v4.tar spring-bdc:v4
 
