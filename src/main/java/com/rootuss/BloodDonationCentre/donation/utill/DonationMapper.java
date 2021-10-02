@@ -15,7 +15,7 @@ import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static java.util.Optional.ofNullable;
+import java.util.Optional;
 
 
 @Component
@@ -26,16 +26,17 @@ public class DonationMapper {
     private final RecipientRepository recipientRepository;
 
     public DonationResponseDto mapToDonationResponseDto(Donation donation) {
-        String recipientName = ofNullable(donation.getRecipient())
+        String recipientName = Optional.ofNullable(donation.getRecipient())
                 .map(Recipient::getName)
                 .orElse(null);
-        Long recipientId = ofNullable(donation.getRecipient())
+        Long recipientId = Optional.ofNullable(donation.getRecipient())
                 .map(Recipient::getId)
                 .orElse(null);
-        String bloodGroupWithRh = ofNullable(donation.getUser().getBlood())
+        String bloodGroupWithRh = Optional.ofNullable(donation.getUser().getBlood())
                 .map(Blood::getName)
                 .map(EBlood::getStringName)
                 .orElse(null);
+
         return DonationResponseDto.builder()
                 .id(donation.getId())
                 .date(donation.getDate())

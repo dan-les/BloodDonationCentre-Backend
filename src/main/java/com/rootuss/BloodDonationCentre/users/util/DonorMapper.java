@@ -10,7 +10,7 @@ import com.rootuss.BloodDonationCentre.users.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
-import static java.util.Optional.ofNullable;
+import java.util.Optional;
 
 
 @Component
@@ -19,20 +19,20 @@ public class DonorMapper {
     private final BloodMapper bloodMapper;
 
     public DonorResponseDto mapToDonorResponseDto(User user) {
-        String bloodGroupWithRh = ofNullable(user.getBlood())
+        String bloodGroupWithRh = Optional.ofNullable(user.getBlood())
                 .map(Blood::getName)
                 .map(EBlood::getStringName)
                 .orElse(null);
 
         return DonorResponseDto.builder()
                 .id(user.getId())
-                .username(ofNullable(user.getUserDetails().getUsername()).orElse(null))
-                .email(ofNullable(user.getEmail()).orElse(null))
-                .firstName(ofNullable(user.getFirstName()).orElse(null))
-                .lastName(ofNullable(user.getLastName()).orElse(null))
-                .pesel(ofNullable(user.getPesel()).orElse(null))
+                .username(Optional.ofNullable(user.getUserDetails().getUsername()).orElse(null))
+                .email(Optional.ofNullable(user.getEmail()).orElse(null))
+                .firstName(Optional.ofNullable(user.getFirstName()).orElse(null))
+                .lastName(Optional.ofNullable(user.getLastName()).orElse(null))
+                .pesel(Optional.ofNullable(user.getPesel()).orElse(null))
                 .bloodGroupWithRh(bloodGroupWithRh)
-                .gender(ofNullable(user.getGender()).orElse(null))
+                .gender(Optional.ofNullable(user.getGender()).orElse(null))
                 .build();
     }
 
