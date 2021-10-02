@@ -79,16 +79,16 @@ public class DonationServiceImpl implements DonationService {
     }
 
     /**
-         WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
-         ---------------------------------------------------
-         pobranie krwi -> kobiety - max 4 razy w roku
-         pobranie krwi -> mężczyźni - max 6 razy w roku
-         ---------------------------------------------------
-         poprzednie pobranie -> kolejne pobranie --- odstęp
-         krew -> krew --- 8 tyg.
-         krew -> osocze --- 4 tyg.
-         osocze -> krew --- 4 tyg.
-         osocze -> osocze --- 2 tyg.
+     * WYMAGANY ODSTĘP POMIĘDZY POBRANIAMI:
+     * ---------------------------------------------------
+     * pobranie krwi -> kobiety - max 4 razy w roku
+     * pobranie krwi -> mężczyźni - max 6 razy w roku
+     * ---------------------------------------------------
+     * poprzednie pobranie -> kolejne pobranie --- odstęp
+     * krew -> krew --- 8 tyg.
+     * krew -> osocze --- 4 tyg.
+     * osocze -> krew --- 4 tyg.
+     * osocze -> osocze --- 2 tyg.
      */
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
             List<Donation> donations, List<Reservation> reservations, User user, EDonationType nextDonationType) {
@@ -301,13 +301,13 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public ResponseEntity<MessageResponse> patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
 
-        Donation donation = donationRepository.findById(recipientChangeRequestDto.getId()).orElseThrow(
-                () -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
+        Donation donation = donationRepository.findById(recipientChangeRequestDto.getId())
+                .orElseThrow(() -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
 
         donation.setId(recipientChangeRequestDto.getId());
         donation.setIsReleased(recipientChangeRequestDto.getIsReleased());
-        donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId()).orElseThrow(
-                () -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
+        donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId())
+                .orElseThrow(() -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
         donationRepository.save(donation);
         return ResponseEntity.ok(new MessageResponse(DONATION_PATCHED_SUCCESSFULLY));
     }
@@ -330,7 +330,8 @@ public class DonationServiceImpl implements DonationService {
         Blood bloodGroupWithRh = bloodMapper.retrieveBloodGroupFromBloodName(value.getStringName());
         return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
                 eDonationType, IS_RELEASED_FALSE, bloodGroupWithRh).stream()
-                .mapToLong(Donation::getAmount).sum();
+                .mapToLong(Donation::getAmount)
+                .sum();
     }
 
     @Override
@@ -338,10 +339,12 @@ public class DonationServiceImpl implements DonationService {
         List<Donation> donations = donationRepository.findByAllUserId(donorId);
         long plasmaAmount = donations.stream()
                 .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
-                .mapToLong(Donation::getAmount).sum();
+                .mapToLong(Donation::getAmount)
+                .sum();
         long bloodAmount = donations.stream()
                 .filter(donation -> donation.getDonationType() == EDonationType.BLOOD)
-                .mapToLong(Donation::getAmount).sum();
+                .mapToLong(Donation::getAmount)
+                .sum();
 
         return UserStatisticsResponseDto.builder()
                 .blood(bloodAmount)

@@ -46,7 +46,10 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private AvailableHoursForReservationResponseDto retrieveAvailableHoursForReservationResponseDto(int hour, boolean isDisabled) {
-        return AvailableHoursForReservationResponseDto.builder().hour(LocalTime.of(hour, 0).toString()).disabled(isDisabled).build();
+        return AvailableHoursForReservationResponseDto.builder()
+                .hour(LocalTime.of(hour, 0).toString())
+                .disabled(isDisabled)
+                .build();
     }
 
     @Override
@@ -76,7 +79,6 @@ public class ReservationServiceImpl implements ReservationService {
         reservationRepository.deleteById(id);
     }
 
-
     @Override
     public ReservationResponseDto getReservationById(Long id) {
         Reservation reservation = retrieveReservationById(id);
@@ -98,7 +100,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     private Reservation retrieveReservationById(Long id) {
-        return reservationRepository.findById(id).orElseThrow(
-                () -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
+        return reservationRepository.findById(id)
+                .orElseThrow(() -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
     }
 }

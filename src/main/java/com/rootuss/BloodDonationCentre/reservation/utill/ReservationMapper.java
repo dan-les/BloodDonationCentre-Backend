@@ -27,18 +27,16 @@ public class ReservationMapper {
                 .orElseThrow(() -> new BloodDonationCentreException(Error.USER_DONOR_NOT_FOUND));
         LocalDate date = LocalDate.parse(reservationRequestDto.getDate().toString());
         LocalTime time = LocalTime.parse(reservationRequestDto.getTime());
-        EDonationType donationType;
-        if (reservationRequestDto.getDonationType().equals(PLASMA)) {
-            donationType = EDonationType.PLASMA;
-        } else {
-            donationType = EDonationType.BLOOD;
-        }
         reservation.setDate(date);
         reservation.setTime(time);
         reservation.setUser(user);
-        reservation.setDonationType(donationType);
+        reservation.setDonationType(retrieveEDonationType(reservationRequestDto));
         reservation.setIsAppointmentFinished(APPOINTMENT_NOT_FINISHED);
         return reservation;
+    }
+
+    private EDonationType retrieveEDonationType(ReservationRequestDto reservationRequestDto) {
+        return reservationRequestDto.getDonationType().equals(PLASMA) ? EDonationType.PLASMA : EDonationType.BLOOD;
     }
 
     public ReservationResponseDto mapToReservationResponseDto(Reservation reservation) {

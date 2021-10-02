@@ -9,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class TokenRefreshResponse {
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-
     private final String tokenType = "Bearer";
     private String accessToken;
     private String refreshToken;

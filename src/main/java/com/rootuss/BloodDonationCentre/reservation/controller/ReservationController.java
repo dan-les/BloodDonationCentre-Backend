@@ -40,11 +40,7 @@ public class ReservationController {
     @PreAuthorize("hasRole('STAFF')")
     public List<ReservationResponseDto> getAllReservations(@RequestParam(required = false)
                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        if (date != null) {
-            return reservationService.getAllReservationsByDate(date);
-        } else {
-            return reservationService.getAllReservations();
-        }
+        return date != null ? reservationService.getAllReservationsByDate(date) : reservationService.getAllReservations();
     }
 
     @GetMapping(value = "list/donor/{donorId}")
