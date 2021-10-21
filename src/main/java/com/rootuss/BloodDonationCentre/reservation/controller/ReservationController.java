@@ -23,7 +23,7 @@ public class ReservationController {
     public static final String RESERVATION_DELETE_SUCCESSFULLY = "Reservation delete successfully";
     private final ReservationService reservationService;
 
-    @GetMapping("/available-hours/list")
+    @GetMapping("/available-hours")
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(@RequestParam
                                                                                   @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
@@ -36,14 +36,14 @@ public class ReservationController {
         return reservationService.addReservation(reservationRequestDto);
     }
 
-    @GetMapping("/list")
+    @GetMapping
     @PreAuthorize("hasRole('STAFF')")
     public List<ReservationResponseDto> getAllReservations(@RequestParam(required = false)
                                                            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
         return date != null ? reservationService.getAllReservationsByDate(date) : reservationService.getAllReservations();
     }
 
-    @GetMapping(value = "list/donor/{donorId}")
+    @GetMapping(value = "/donor/{donorId}")
     @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #donorId)")
     public List<ReservationResponseDto> getAllReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);

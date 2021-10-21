@@ -17,7 +17,7 @@ import java.util.List;
 public class RecipientController {
     private final RecipientService recipientService;
 
-    @GetMapping("/list")
+    @GetMapping
     @PreAuthorize("hasRole('STAFF')")
     public List<Recipient> getAllRecipients() {
         return recipientService.getAllRecipients();

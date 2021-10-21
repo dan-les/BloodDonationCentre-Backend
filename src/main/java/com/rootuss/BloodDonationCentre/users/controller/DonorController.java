@@ -21,7 +21,7 @@ public class DonorController {
     public static final String DONOR_DELETE_SUCCESSFULLY = "Donor delete successfully";
     private final DonorService donorService;
 
-    @GetMapping("/list")
+    @GetMapping
     @PreAuthorize("hasRole('STAFF')")
     public List<DonorResponseDto> getAllDonors() {
         return donorService.getAllDonors();

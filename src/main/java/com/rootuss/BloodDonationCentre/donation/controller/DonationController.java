@@ -17,7 +17,7 @@ import java.util.List;
 public class DonationController {
     private final DonationService donationService;
 
-    @GetMapping("/list")
+    @GetMapping
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
     public List<DonationResponseDto> getDonations(@RequestParam(required = false) Long donorId,
                                                   @RequestParam(required = false) String donationType,
