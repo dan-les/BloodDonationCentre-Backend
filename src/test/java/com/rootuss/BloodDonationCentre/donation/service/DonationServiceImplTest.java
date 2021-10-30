@@ -8,7 +8,6 @@ import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.rootuss.BloodDonationCentre.users.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -23,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.ArgumentMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -33,7 +33,6 @@ class DonationServiceImplTest {
     public static final int INTERVAL_2_WEEKS = 2;
     @Mock
     private UserRepository userRepository;
-
     @Mock
     private ReservationRepository reservationRepository;
     @Mock
@@ -43,12 +42,6 @@ class DonationServiceImplTest {
     @InjectMocks
     private DonationServiceImpl donationService;
 
-
-    @BeforeEach
-    void setUp() {
-
-    }
-
     @Test
     void shouldCheckIntervalBetweenBloodAndBloodDonation() {
         // given
@@ -56,7 +49,7 @@ class DonationServiceImplTest {
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
@@ -75,6 +68,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, lastDonationDate.plusWeeks(INTERVAL_8_WEEKS));
     }
 
@@ -85,7 +79,7 @@ class DonationServiceImplTest {
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
@@ -104,6 +98,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, lastDonationDate.plusWeeks(INTERVAL_4_WEEKS));
     }
 
@@ -114,7 +109,7 @@ class DonationServiceImplTest {
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.PLASMA;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
@@ -133,6 +128,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, lastDonationDate.plusWeeks(INTERVAL_2_WEEKS));
     }
 
@@ -143,7 +139,7 @@ class DonationServiceImplTest {
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
@@ -162,6 +158,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, lastDonationDate.plusWeeks(INTERVAL_4_WEEKS));
     }
 
@@ -173,7 +170,7 @@ class DonationServiceImplTest {
         EDonationType lastDonationType = EDonationType.BLOOD;
         EDonationType lastReservationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         LocalDate lastDonationDate = LocalDate.of(2021, 2, 11);
@@ -195,6 +192,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, lastReservationDate.plusWeeks(INTERVAL_8_WEEKS));
     }
 
@@ -205,7 +203,7 @@ class DonationServiceImplTest {
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 1, 1));
@@ -228,17 +226,18 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, LocalDate.of(2021, 12, 10).plusWeeks(INTERVAL_8_WEEKS));
     }
 
     @Test
-    void shouldCheckMaxYearBloodDonationsQuantityForWomanWhenLastDonationDateIsEarlierBeforeEndOfYear() {
+    void shouldCheckMaxYearBloodDonationsQuantityForWomanWhenLastDonationDateIsBeforeEndOfYear() {
         // given
         Long userId = 1L;
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
-        ArrayList<Reservation> reservations = new ArrayList<>();
+        List<Reservation> reservations = new ArrayList<>();
         List<Donation> donations = new ArrayList<>();
 
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 1, 1));
@@ -259,6 +258,7 @@ class DonationServiceImplTest {
         LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
 
         // then
+        assertNotNull(date);
         assertEquals(date, LocalDate.of(2022, 1, 1));
     }
 
@@ -270,9 +270,10 @@ class DonationServiceImplTest {
     }
 
     private void addNewReservation(EDonationType lastReservationType, List<Reservation> reservations, LocalDate lastReservationDate) {
-        reservations.add(Reservation.builder()
+        Reservation reservation = Reservation.builder()
                 .date(lastReservationDate)
                 .donationType(lastReservationType)
-                .build());
+                .build();
+        reservations.add(reservation);
     }
 }
