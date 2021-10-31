@@ -23,17 +23,10 @@ public class ReservationController {
     public static final String RESERVATION_DELETE_SUCCESSFULLY = "Reservation delete successfully";
     private final ReservationService reservationService;
 
-    @GetMapping("/available-hours")
-    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(@RequestParam
-                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return reservationService.getHoursWithAvailability(date);
-    }
-
-    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    @PostMapping
-    public ReservationResponseDto addReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto) {
-        return reservationService.addReservation(reservationRequestDto);
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('STAFF')")
+    public ReservationResponseDto getReservationById(@PathVariable Long id) {
+        return reservationService.getReservationById(id);
     }
 
     @GetMapping
@@ -49,16 +42,23 @@ public class ReservationController {
         return reservationService.getAllReservationsByDonorId(donorId);
     }
 
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserDeleteOwnReservation(authentication, #id)")
+    @GetMapping("/available-hours")
+    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
+    public List<AvailableHoursForReservationResponseDto> getHoursWithAvailability(@RequestParam
+                                                                                  @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        return reservationService.getHoursWithAvailability(date);
+    }
+
+    @PostMapping
+    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
+    public ReservationResponseDto addReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto) {
+        return reservationService.addReservation(reservationRequestDto);
+    }
+
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToDeleteChosenReservation(authentication, #id)")
     public ResponseEntity<MessageResponse> deleteReservation(@PathVariable Long id) {
         reservationService.deleteById(id);
         return ResponseEntity.ok(new MessageResponse(RESERVATION_DELETE_SUCCESSFULLY));
-    }
-
-    @PreAuthorize("hasRole('STAFF')")
-    @GetMapping(value = "/{id}")
-    public ReservationResponseDto getReservationById(@PathVariable Long id) {
-        return reservationService.getReservationById(id);
     }
 }

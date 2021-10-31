@@ -26,35 +26,7 @@ public class DonationController {
         if (donorId != null) {
             return donationService.getDonationsByDonorId(donorId);
         } else {
-            if (donationType != null) {
-                if (isReleased != null) {
-                    if (bloodGroupWithRh != null) {
-                        return donationService.getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(donationType, isReleased, bloodGroupWithRh);
-                    } else {
-                        return donationService.getAllByDonationTypeAndIsReleased(donationType, isReleased);
-                    }
-                } else {
-                    if (bloodGroupWithRh != null) {
-                        return donationService.getAllByDonationTypeAndBloodGroupWithRh(donationType, bloodGroupWithRh);
-                    } else {
-                        return donationService.getAllByDonationType(donationType);
-                    }
-                }
-            } else {
-                if (isReleased != null) {
-                    if (bloodGroupWithRh != null) {
-                        return donationService.getAllByIsReleasedAndBloodGroupWithRh(isReleased, bloodGroupWithRh);
-                    } else {
-                        return donationService.getAllByIsReleased(isReleased);
-                    }
-                } else {
-                    if (bloodGroupWithRh != null) {
-                        return donationService.getAllByBloodGroupWithRh(bloodGroupWithRh);
-                    } else {
-                        return donationService.getAllDonations();
-                    }
-                }
-            }
+            return donationService.getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(donationType, isReleased, bloodGroupWithRh);
         }
     }
 
@@ -78,7 +50,7 @@ public class DonationController {
 
     @GetMapping("/statistics")
     @PreAuthorize("hasRole('STAFF')")
-    public List<StatisticsResponseDto> getBloodStatistics(@RequestParam String donationType) {
+    public List<StatisticsResponseDto> getDonationsStatistics(@RequestParam String donationType) {
         return donationService.getDonationsStatistics(donationType);
     }
 

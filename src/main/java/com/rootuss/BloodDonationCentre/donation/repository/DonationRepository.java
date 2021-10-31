@@ -22,28 +22,8 @@ public interface DonationRepository extends JpaRepository<Donation, Long> {
     @Query("SELECT d FROM Donation d WHERE d.user.id = :userId ORDER BY d.date DESC")
     List<Donation> findByAllUserId(Long userId);
 
-    @Query("SELECT distinct d FROM Donation d JOIN d.user u WHERE u.blood = :bloodGroupWithRh " +
-            "AND d.donationType = :eDonationType AND d.isReleased = :isReleased")
+    @Query("SELECT distinct d FROM Donation d JOIN d.user u WHERE (:bloodGroupWithRh is null or u.blood = :bloodGroupWithRh) " +
+            "AND (:eDonationType is null or d.donationType = :eDonationType) AND (:isReleased is null or d.isReleased = :isReleased)")
     List<Donation> findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
             EDonationType eDonationType, Boolean isReleased, Blood bloodGroupWithRh);
-
-    @Query("SELECT d FROM Donation d WHERE d.donationType = :eDonationType AND d.isReleased = :isReleased ")
-    List<Donation> findAllByDonationTypeAndIsReleased(EDonationType eDonationType, Boolean isReleased);
-
-    @Query("SELECT distinct d FROM Donation d JOIN d.user u WHERE u.blood = :bloodGroupWithRh " +
-            "AND d.donationType = :eDonationType")
-    List<Donation> findAllByDonationTypeAndBloodGroupWithRh(EDonationType eDonationType, Blood bloodGroupWithRh);
-
-    @Query("SELECT distinct d FROM Donation d JOIN d.user u WHERE u.blood = :bloodGroupWithRh " +
-            "AND d.isReleased = :isReleased")
-    List<Donation> findAllByIsReleasedAndBloodGroupWithRh(Boolean isReleased, Blood bloodGroupWithRh);
-
-    @Query("SELECT d FROM Donation d WHERE d.donationType = :eDonationType")
-    List<Donation> findAllByDonationType(EDonationType eDonationType);
-
-    @Query("SELECT d FROM Donation d WHERE d.isReleased = :isReleased ")
-    List<Donation> findAllByIsReleased(Boolean isReleased);
-
-    @Query("SELECT distinct d FROM Donation d JOIN d.user u WHERE u.blood = :bloodGroupWithRh")
-    List<Donation> findAllByBloodGroupWithRh(Blood bloodGroupWithRh);
 }

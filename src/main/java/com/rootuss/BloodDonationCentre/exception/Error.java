@@ -13,6 +13,7 @@ public enum Error {
     DONATION_NOT_FOUND("Donation not found", HttpStatus.NOT_FOUND),
     RECIPIENT_NOT_FOUND("Recipient not found", HttpStatus.NOT_FOUND),
     ROLE_NOT_FOUND("Role not found", HttpStatus.NOT_FOUND),
+    WRONG_RESERVATION_DATE("Reservation date is before soonest possible date for next donation", HttpStatus.BAD_REQUEST),
     USERNAME_IS_ALREADY_TAKEN("Username is already taken", HttpStatus.BAD_REQUEST),
     EMAIL_IS_ALREADY_IN_USE("Email is already in use", HttpStatus.BAD_REQUEST),
     REFRESH_TOKEN_IS_NOT_IN_DATABASE("Refresh token is not in database", HttpStatus.BAD_REQUEST);

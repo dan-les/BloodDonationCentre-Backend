@@ -8,6 +8,7 @@ import com.rootuss.BloodDonationCentre.donation.repository.DonationRepository;
 import com.rootuss.BloodDonationCentre.donation.utill.DonationMapper;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
+import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
 import com.rootuss.BloodDonationCentre.recipent.repository.RecipientRepository;
 import com.rootuss.BloodDonationCentre.reservation.model.Reservation;
 import com.rootuss.BloodDonationCentre.reservation.repository.ReservationRepository;
@@ -20,7 +21,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -92,8 +96,10 @@ public class DonationServiceImpl implements DonationService {
      */
     private NextDonationResponseDto retrieveSoonestPossibleDateForNextDonation(
             List<Donation> donations, List<Reservation> reservations, User user, EDonationType nextDonationType) {
-        Optional<Donation> lastDonation = donations.stream().max(Comparator.comparing(Donation::getDate));
-        Optional<Reservation> lastReservation = reservations.stream().max(Comparator.comparing(Reservation::getDate));
+        Optional<Donation> lastDonation = donations.stream()
+                .max(Comparator.comparing(Donation::getDate));
+        Optional<Reservation> lastReservation = reservations.stream()
+                .max(Comparator.comparing(Reservation::getDate));
 
         long bloodDonationsInCurrentYearQuantity = retrieveBloodDonationsInCurrentYearQuantity(donations);
 
@@ -103,7 +109,7 @@ public class DonationServiceImpl implements DonationService {
             LocalDate date;
             if (lastReservation.isPresent()) {
                 date = calculateDateWhenLastDonationAndLastReservationIsPresent(
-                        user, nextDonationType, lastReservation, bloodDonationsInCurrentYearQuantity,
+                        user, nextDonationType, lastReservation.get(), bloodDonationsInCurrentYearQuantity,
                         lastDonationType, lastDonationDate);
             } else {
                 date = calculateDate(nextDonationType, lastDonationType, lastDonationDate, user, bloodDonationsInCurrentYearQuantity);
@@ -123,12 +129,12 @@ public class DonationServiceImpl implements DonationService {
 
     private LocalDate calculateDateWhenLastDonationAndLastReservationIsPresent(User user,
                                                                                EDonationType nextDonationType,
-                                                                               Optional<Reservation> lastReservation,
+                                                                               Reservation lastReservation,
                                                                                long bloodDonationsInCurrentYearQuantity,
                                                                                EDonationType lastDonationType,
                                                                                LocalDate lastDonationDate) {
-        EDonationType lastReservationType = lastReservation.get().getDonationType();
-        LocalDate lastReservationDate = lastReservation.get().getDate();
+        EDonationType lastReservationType = lastReservation.getDonationType();
+        LocalDate lastReservationDate = lastReservation.getDate();
         LocalDate date;
         var lastDonationOrReservationDate = lastDonationDate.isAfter(lastReservationDate) ? lastDonationDate : lastReservationDate;
         if (lastDonationDate.isBefore(lastReservationDate)) {
@@ -234,10 +240,12 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public List<DonationResponseDto> getAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(
             String donationType, Boolean isReleased, String bloodGroupWithRh) {
-
-        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
-
+        EDonationType eDonationType = Optional.ofNullable(donationType)
+                .map(donationMapper::retrieveEDonationType)
+                .orElse(null);
+        Blood blood = Optional.ofNullable(bloodGroupWithRh)
+                .map(bloodMapper::retrieveBloodGroupFromBloodName)
+                .orElse(null);
         return donationRepository.findAllByDonationTypeAndIsReleasedAndBloodGroupWithRh(eDonationType, isReleased, blood)
                 .stream()
                 .map(donationMapper::mapToDonationResponseDto)
@@ -245,84 +253,30 @@ public class DonationServiceImpl implements DonationService {
     }
 
     @Override
-    public List<DonationResponseDto> getAllByDonationTypeAndIsReleased(String donationType, Boolean isReleased) {
-        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        return donationRepository.findAllByDonationTypeAndIsReleased(eDonationType, isReleased)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DonationResponseDto> getAllByDonationTypeAndBloodGroupWithRh(String donationType, String bloodGroupWithRh) {
-        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
-        return donationRepository.findAllByDonationTypeAndBloodGroupWithRh(eDonationType, blood)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DonationResponseDto> getAllByDonationType(String donationType) {
-        EDonationType eDonationType = donationMapper.retrieveEDonationType(donationType);
-        return donationRepository.findAllByDonationType(eDonationType)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DonationResponseDto> getAllByIsReleasedAndBloodGroupWithRh(Boolean isReleased, String bloodGroupWithRh) {
-        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
-        return donationRepository.findAllByIsReleasedAndBloodGroupWithRh(isReleased, blood)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DonationResponseDto> getAllByIsReleased(Boolean isReleased) {
-        return donationRepository.findAllByIsReleased(isReleased)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<DonationResponseDto> getAllByBloodGroupWithRh(String bloodGroupWithRh) {
-        Blood blood = bloodMapper.retrieveBloodGroupFromBloodName(bloodGroupWithRh);
-        return donationRepository.findAllByBloodGroupWithRh(blood)
-                .stream()
-                .map(donationMapper::mapToDonationResponseDto)
-                .collect(Collectors.toList());
-    }
-
-    @Override
     public ResponseEntity<MessageResponse> patchDonation(RecipientChangeRequestDto recipientChangeRequestDto) {
-
         Donation donation = donationRepository.findById(recipientChangeRequestDto.getId())
                 .orElseThrow(() -> new BloodDonationCentreException(Error.DONATION_NOT_FOUND));
+        Recipient recipient = recipientRepository.findById(recipientChangeRequestDto.getRecipientId())
+                .orElseThrow(() -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND));
 
-        donation.setId(recipientChangeRequestDto.getId());
         donation.setIsReleased(recipientChangeRequestDto.getIsReleased());
-        donation.setRecipient(recipientRepository.findById(recipientChangeRequestDto.getRecipientId())
-                .orElseThrow(() -> new BloodDonationCentreException(Error.RECIPIENT_NOT_FOUND)));
+        donation.setRecipient(recipient);
         donationRepository.save(donation);
         return ResponseEntity.ok(new MessageResponse(DONATION_PATCHED_SUCCESSFULLY));
     }
 
     @Override
     public List<StatisticsResponseDto> getDonationsStatistics(String donationType) {
-        List<StatisticsResponseDto> statisticsResponseDtoArrayList = new ArrayList<>();
-        Arrays.asList(EBlood.values())
-                .forEach(value -> {
-                    statisticsResponseDtoArrayList.add(StatisticsResponseDto.builder()
-                            .bloodGroupWithRh(value.getStringName())
-                            .quantity(retrieveQuantity(value, donationType))
-                            .build());
-                });
-        return statisticsResponseDtoArrayList;
+        return Arrays.stream(EBlood.values())
+                .map(value -> buildBloodStatisticsResponseDto(donationType, value))
+                .collect(Collectors.toList());
+    }
+
+    private StatisticsResponseDto buildBloodStatisticsResponseDto(String donationType, EBlood value) {
+        return StatisticsResponseDto.builder()
+                .bloodGroupWithRh(value.getStringName())
+                .quantity(retrieveQuantity(value, donationType))
+                .build();
     }
 
     private long retrieveQuantity(EBlood value, String donationType) {
@@ -337,15 +291,14 @@ public class DonationServiceImpl implements DonationService {
     @Override
     public UserStatisticsResponseDto getUserDonationsStatistics(Long donorId) {
         List<Donation> donations = donationRepository.findByAllUserId(donorId);
-        long plasmaAmount = donations.stream()
-                .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
-                .mapToLong(Donation::getAmount)
-                .sum();
         long bloodAmount = donations.stream()
                 .filter(donation -> donation.getDonationType() == EDonationType.BLOOD)
                 .mapToLong(Donation::getAmount)
                 .sum();
-
+        long plasmaAmount = donations.stream()
+                .filter(donation -> donation.getDonationType() == EDonationType.PLASMA)
+                .mapToLong(Donation::getAmount)
+                .sum();
         return UserStatisticsResponseDto.builder()
                 .blood(bloodAmount)
                 .plasma(plasmaAmount)
@@ -353,6 +306,6 @@ public class DonationServiceImpl implements DonationService {
     }
 
     private void setReservationStatusAsAppointmentFinished(DonationRequestDto donationRequestDto) {
-        reservationService.changeReservationStatusAsAppointmentFinished(donationRequestDto.getReservationId());
+        reservationService.setReservationStatusAsAppointmentFinished(donationRequestDto.getReservationId());
     }
 }

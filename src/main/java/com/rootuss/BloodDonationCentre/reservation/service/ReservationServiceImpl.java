@@ -1,5 +1,6 @@
 package com.rootuss.BloodDonationCentre.reservation.service;
 
+import com.rootuss.BloodDonationCentre.donation.utill.DateValidator;
 import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.reservation.model.AvailableHoursForReservationResponseDto;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class ReservationServiceImpl implements ReservationService {
     private final ReservationRepository reservationRepository;
     private final ReservationMapper reservationMapper;
+    private final DateValidator dateValidator;
 
     private final int maxQuantityOfReservationsInTheSameTimeSlot = 2;
     private final int firstEntry = 8;
@@ -54,6 +56,7 @@ public class ReservationServiceImpl implements ReservationService {
 
     @Override
     public ReservationResponseDto addReservation(ReservationRequestDto reservationRequestDto) {
+        dateValidator.validateDonationDate(reservationRequestDto);
         Reservation reservation = reservationMapper.mapReservationRequestDtoToReservation(reservationRequestDto);
         reservation = reservationRepository.save(reservation);
         return reservationMapper.mapToReservationResponseDto(reservation);
@@ -93,7 +96,7 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
-    public void changeReservationStatusAsAppointmentFinished(Long reservationId) {
+    public void setReservationStatusAsAppointmentFinished(Long reservationId) {
         Reservation reservation = retrieveReservationById(reservationId);
         reservation.setIsAppointmentFinished(true);
         reservationRepository.saveAndFlush(reservation);
@@ -103,4 +106,6 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationRepository.findById(id)
                 .orElseThrow(() -> new BloodDonationCentreException(Error.RESERVATION_NOT_FOUND));
     }
+
+
 }

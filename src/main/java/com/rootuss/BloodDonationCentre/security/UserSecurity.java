@@ -20,7 +20,7 @@ public class UserSecurity {
         return userId.equals(userDetails.getId());
     }
 
-    public boolean isLoggedUserDeleteOwnReservation(Authentication authentication, Long reservationId) {
+    public boolean isLoggedUserAbleToDeleteChosenReservation(Authentication authentication, Long reservationId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         List<Long> userReservationsIds = reservationRepository.findAllByDonorId(userDetails.getId()).stream()
                 .map(Reservation::getId)
