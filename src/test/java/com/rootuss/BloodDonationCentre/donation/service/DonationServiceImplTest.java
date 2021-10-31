@@ -20,17 +20,22 @@ import org.mockito.quality.Strictness;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
 class DonationServiceImplTest {
-    public static final int INTERVAL_8_WEEKS = 8;
-    public static final int INTERVAL_4_WEEKS = 4;
-    public static final int INTERVAL_2_WEEKS = 2;
+    private static final int INTERVAL_8_WEEKS = 8;
+    private static final int INTERVAL_4_WEEKS = 4;
+    private static final int INTERVAL_2_WEEKS = 2;
+    private static final String GENDER_MAN = "M";
+    private static final String GENDER_WOMAN = "K";
+
     @Mock
     private UserRepository userRepository;
     @Mock
@@ -45,7 +50,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckIntervalBetweenBloodAndBloodDonation() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_MAN);
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
@@ -55,17 +60,10 @@ class DonationServiceImplTest {
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
         addNewDonation(lastDonationType, donations, lastDonationDate);
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserMan());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -75,7 +73,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckIntervalBetweenBloodAndPlasmaDonation() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_MAN);
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
@@ -85,17 +83,10 @@ class DonationServiceImplTest {
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
         addNewDonation(lastDonationType, donations, lastDonationDate);
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserMan());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -105,7 +96,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckIntervalBetweenPlasmaAndPlasmaDonation() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_MAN);
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.PLASMA;
 
@@ -115,17 +106,10 @@ class DonationServiceImplTest {
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
         addNewDonation(lastDonationType, donations, lastDonationDate);
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserMan());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -135,7 +119,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckIntervalBetweenPlasmaAndBloodDonation() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_MAN);
         EDonationType nextDonationType = EDonationType.PLASMA;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
@@ -145,17 +129,10 @@ class DonationServiceImplTest {
         LocalDate lastDonationDate = LocalDate.of(2021, 5, 10);
         addNewDonation(lastDonationType, donations, lastDonationDate);
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserMan());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -165,7 +142,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckIntervalBetweenLastBloodDonationReservationAndNextBloodDonation() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_MAN);
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
         EDonationType lastReservationType = EDonationType.BLOOD;
@@ -179,17 +156,10 @@ class DonationServiceImplTest {
         addNewDonation(lastDonationType, donations, lastDonationDate);
         addNewReservation(lastReservationType, reservations, lastReservationDate);
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserMan());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -199,7 +169,7 @@ class DonationServiceImplTest {
     @Test
     void shouldCheckMaxYearBloodDonationsQuantityForManWhenLastDonationDateIsInLastTwoMonthsOfYear() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_WOMAN);
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
@@ -213,17 +183,10 @@ class DonationServiceImplTest {
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 10, 10));
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 12, 10));
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserWoman());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
@@ -231,9 +194,9 @@ class DonationServiceImplTest {
     }
 
     @Test
-    void shouldCheckMaxYearBloodDonationsQuantityForWomanWhenLastDonationDateIsBeforeEndOfYear() {
+    void shouldCheckMaxYearBloodDonationsQuantityForWomanWhenLastDonationDateIsTwoMonthsBeforeEndOfYear() {
         // given
-        Long userId = 1L;
+        User user = DonationServiceImplTestSupport.createUser(GENDER_WOMAN);
         EDonationType nextDonationType = EDonationType.BLOOD;
         EDonationType lastDonationType = EDonationType.BLOOD;
 
@@ -241,32 +204,37 @@ class DonationServiceImplTest {
         List<Donation> donations = new ArrayList<>();
 
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 1, 1));
-        addNewDonation(lastDonationType, donations, LocalDate.of(2021, 2, 10));
         addNewDonation(lastDonationType, donations, LocalDate.of(2021, 3, 10));
-        addNewDonation(lastDonationType, donations, LocalDate.of(2021, 4, 10));
+        addNewDonation(lastDonationType, donations, LocalDate.of(2021, 5, 10));
+        addNewDonation(lastDonationType, donations, LocalDate.of(2021, 8, 10));
 
-        Mockito.when(userRepository.findById(anyLong()))
-                .thenReturn(DonationServiceImplTestSupport.createUserWoman());
-        Mockito.when(donationRepository.findByUser(any(User.class)))
-                .thenReturn(donations);
-        Mockito.when(reservationRepository.findAllByDonorId(anyLong()))
-                .thenReturn(reservations);
-        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
-                .thenReturn(nextDonationType);
+        callMocks(nextDonationType, reservations, donations, user);
 
         // when
-        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), userId).getDate();
+        LocalDate date = donationService.getSoonestPossibleDateForNextDonation(nextDonationType.getName(), user.getId()).getDate();
 
         // then
         assertNotNull(date);
         assertEquals(date, LocalDate.of(2022, 1, 1));
     }
 
+    private void callMocks(EDonationType nextDonationType, List<Reservation> reservations, List<Donation> donations, User user) {
+        Mockito.when(userRepository.findById(anyLong()))
+                .thenReturn(Optional.of(user));
+        Mockito.when(donationRepository.findByUser(user))
+                .thenReturn(donations);
+        Mockito.when(reservationRepository.findAllByDonorId(user.getId()))
+                .thenReturn(reservations);
+        Mockito.when(donationMapper.retrieveEDonationType(anyString()))
+                .thenReturn(nextDonationType);
+    }
+
     private void addNewDonation(EDonationType lastDonationType, List<Donation> donations, LocalDate lastDonationDate) {
-        donations.add(Donation.builder()
+        Donation donation = Donation.builder()
                 .date(lastDonationDate)
                 .donationType(lastDonationType)
-                .build());
+                .build();
+        donations.add(donation);
     }
 
     private void addNewReservation(EDonationType lastReservationType, List<Reservation> reservations, LocalDate lastReservationDate) {

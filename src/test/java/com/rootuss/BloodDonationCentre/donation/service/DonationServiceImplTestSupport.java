@@ -4,30 +4,13 @@ import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.blood.model.EBlood;
 import com.rootuss.BloodDonationCentre.users.model.User;
 
-import java.util.Optional;
-
 public class DonationServiceImplTestSupport {
-    static Optional<User> createUserMan() {
-        return Optional.ofNullable(User.builder()
+    static User createUser(String gender) {
+        return User.builder()
                 .id(1L)
-                .firstName("Adam")
-                .lastName("Kowalski")
                 .blood(new Blood(EBlood.GROUP_AB_RH_MINUS))
-                .email("adam.kowalski@gmail.com")
-                .gender("M")
+                .gender(gender)
                 .pesel("99111203216")
-                .build());
-    }
-
-    static Optional<User> createUserWoman() {
-        return Optional.ofNullable(User.builder()
-                .id(1L)
-                .firstName("Monika")
-                .lastName("Kowalska")
-                .blood(new Blood(EBlood.GROUP_AB_RH_MINUS))
-                .email("m.kowalska@gmail.com")
-                .gender("K")
-                .pesel("99111203216")
-                .build());
+                .build();
     }
 }
