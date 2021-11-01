@@ -32,6 +32,6 @@ public class Donation {
     @Column(name = "is_released")
     private Boolean isReleased;
     @Nullable
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Recipient recipient;
 }
