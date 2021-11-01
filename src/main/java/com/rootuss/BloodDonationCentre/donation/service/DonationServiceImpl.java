@@ -30,15 +30,15 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class DonationServiceImpl implements DonationService {
-    public static final int INTERVAL_8_WEEKS = 8;
-    public static final int INTERVAL_4_WEEKS = 4;
-    public static final int INTERVAL_2_WEEKS = 2;
-    public static final String WOMAN = "K";
-    public static final String MAN = "M";
-    public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
-    public static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
+    private static final int INTERVAL_8_WEEKS = 8;
+    private static final int INTERVAL_4_WEEKS = 4;
+    private static final int INTERVAL_2_WEEKS = 2;
+    private static final String WOMAN = "K";
+    private static final String MAN = "M";
+    private static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_WOMAN = 4;
+    private static final int MAX_YEAR_QUANTITY_BLOOD_DONATIONS_MAN = 6;
     private static final Boolean IS_RELEASED_FALSE = false;
-    public static final String DONATION_PATCHED_SUCCESSFULLY = "Donation patched successfully";
+    private static final String DONATION_PATCHED_SUCCESSFULLY = "Donation patched successfully";
 
     private final DonationRepository donationRepository;
     private final ReservationRepository reservationRepository;

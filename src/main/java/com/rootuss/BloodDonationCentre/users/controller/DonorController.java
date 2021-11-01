@@ -28,7 +28,7 @@ public class DonorController {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #id)")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.loggedUserAbleToRetrieveDataByPassedDonorId(authentication, #id)")
     public Optional<DonorResponseDto> getDonorById(@PathVariable Long id) {
         return donorService.loadDonorById(id);
     }

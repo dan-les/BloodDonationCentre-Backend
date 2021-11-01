@@ -15,9 +15,9 @@ import java.util.stream.Collectors;
 public class UserSecurity {
     private final ReservationRepository reservationRepository;
 
-    public boolean isLoggedUserAbleToRetrieveReservationsByPassedDonorId(Authentication authentication, Long userId) {
+    public boolean isLoggedUserAbleToRetrieveDataByPassedDonorId(Authentication authentication, Long userId) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
-        return userId.equals(userDetails.getId());
+        return userId != null && userId.equals(userDetails.getId());
     }
 
     public boolean isLoggedUserAbleToDeleteChosenReservation(Authentication authentication, Long reservationId) {

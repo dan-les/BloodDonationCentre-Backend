@@ -2,20 +2,18 @@ package com.rootuss.BloodDonationCentre.reservation.model;
 
 import com.rootuss.BloodDonationCentre.donation.model.EDonationType;
 import com.rootuss.BloodDonationCentre.users.model.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Entity
-@Data
-@Builder
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
+@Entity
 @Table(name = "reservations")
 public class Reservation {
     @Id

@@ -18,7 +18,7 @@ public class DonationController {
     private final DonationService donationService;
 
     @GetMapping
-    @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveDataByPassedDonorId(authentication, #donorId)")
     public List<DonationResponseDto> getDonations(@RequestParam(required = false) Long donorId,
                                                   @RequestParam(required = false) String donationType,
                                                   @RequestParam(required = false) Boolean isReleased,
@@ -55,7 +55,7 @@ public class DonationController {
     }
 
     @GetMapping("/donor/{donorId}/statistics")
-    @PreAuthorize("@userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #donorId)")
+    @PreAuthorize("@userSecurity.isLoggedUserAbleToRetrieveDataByPassedDonorId(authentication, #donorId)")
     public UserStatisticsResponseDto getUserDonationsStatistics(@PathVariable Long donorId) {
         return donationService.getUserDonationsStatistics(donorId);
     }

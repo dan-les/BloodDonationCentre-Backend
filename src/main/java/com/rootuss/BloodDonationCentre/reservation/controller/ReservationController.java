@@ -37,7 +37,7 @@ public class ReservationController {
     }
 
     @GetMapping(value = "/donor/{donorId}")
-    @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToRetrieveReservationsByPassedDonorId(authentication, #donorId)")
+    @PreAuthorize("hasRole('STAFF') or @userSecurity.loggedUserAbleToRetrieveDataByPassedDonorId(authentication, #donorId)")
     public List<ReservationResponseDto> getAllReservationsByDonorId(@PathVariable Long donorId) {
         return reservationService.getAllReservationsByDonorId(donorId);
     }
