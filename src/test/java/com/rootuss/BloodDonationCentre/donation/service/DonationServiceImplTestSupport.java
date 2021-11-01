@@ -6,11 +6,10 @@ import com.rootuss.BloodDonationCentre.users.model.User;
 
 public class DonationServiceImplTestSupport {
     static User createUser(String gender) {
-        return User.builder()
-                .id(1L)
-                .blood(new Blood(EBlood.GROUP_AB_RH_MINUS))
-                .gender(gender)
-                .pesel("99111203216")
-                .build();
+        User user = new User();
+        user.setBlood(new Blood(EBlood.GROUP_AB_RH_MINUS));
+        user.setGender(gender);
+        user.setPesel("99111203216");
+        return user;
     }
 }

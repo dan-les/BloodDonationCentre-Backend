@@ -2,18 +2,14 @@ package com.rootuss.BloodDonationCentre.users.model;
 
 import com.rootuss.BloodDonationCentre.blood.model.Blood;
 import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Data
 @Entity
 @Table(name = "users",
         uniqueConstraints = {

@@ -3,16 +3,12 @@ package com.rootuss.BloodDonationCentre.donation.model;
 import com.rootuss.BloodDonationCentre.recipent.model.Recipient;
 import com.rootuss.BloodDonationCentre.users.model.User;
 import com.sun.istack.Nullable;
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Data
 @Entity
 @Table(name = "donations")
 public class Donation {

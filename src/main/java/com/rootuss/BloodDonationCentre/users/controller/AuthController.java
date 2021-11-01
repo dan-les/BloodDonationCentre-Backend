@@ -149,15 +149,11 @@ public class AuthController {
     }
 
     private User retrieveUser(SignupRequestDto signUpRequest) {
-        User user = new User(
-                null,
-                signUpRequest.getEmail(),
-                signUpRequest.getFirstName(),
-                signUpRequest.getLastName(),
-                null,
-                null,
-                null,
-                retrieveUserDetails(signUpRequest));
+        User user = new User();
+        user.setEmail(signUpRequest.getEmail());
+        user.setFirstName(signUpRequest.getFirstName());
+        user.setLastName(signUpRequest.getLastName());
+        user.setUserDetails(retrieveUserDetails(signUpRequest));
         return user;
     }
 

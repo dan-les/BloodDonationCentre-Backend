@@ -2,17 +2,13 @@ package com.rootuss.BloodDonationCentre.reservation.model;
 
 import com.rootuss.BloodDonationCentre.donation.model.EDonationType;
 import com.rootuss.BloodDonationCentre.users.model.User;
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
+@Data
 @Entity
 @Table(name = "reservations")
 public class Reservation {

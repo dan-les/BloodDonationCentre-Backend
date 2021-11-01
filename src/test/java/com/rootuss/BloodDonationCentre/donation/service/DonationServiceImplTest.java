@@ -230,18 +230,16 @@ class DonationServiceImplTest {
     }
 
     private void addNewDonation(EDonationType lastDonationType, List<Donation> donations, LocalDate lastDonationDate) {
-        Donation donation = Donation.builder()
-                .date(lastDonationDate)
-                .donationType(lastDonationType)
-                .build();
+        Donation donation = new Donation();
+        donation.setDate(lastDonationDate);
+        donation.setDonationType(lastDonationType);
         donations.add(donation);
     }
 
     private void addNewReservation(EDonationType lastReservationType, List<Reservation> reservations, LocalDate lastReservationDate) {
-        Reservation reservation = Reservation.builder()
-                .date(lastReservationDate)
-                .donationType(lastReservationType)
-                .build();
+        Reservation reservation = new Reservation();
+        reservation.setDate(lastReservationDate);
+        reservation.setDonationType(lastReservationType);
         reservations.add(reservation);
     }
 }

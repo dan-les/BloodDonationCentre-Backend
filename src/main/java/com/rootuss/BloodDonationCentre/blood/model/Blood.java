@@ -1,15 +1,11 @@
 package com.rootuss.BloodDonationCentre.blood.model;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
-@NoArgsConstructor
+@Data
 @Table(name = "bloods")
 public class Blood {
     @Id
