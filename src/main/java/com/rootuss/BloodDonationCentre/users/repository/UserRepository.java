@@ -19,6 +19,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT distinct u FROM User u JOIN u.userDetails ud JOIN ud.roles r " +
             "WHERE r.name =:roleName AND u.userDetails.enabled = true")
     List<User> findAllDonors(ERole roleName);
-
-    void deleteById(Long id);
 }

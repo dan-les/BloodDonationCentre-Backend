@@ -20,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api/reservation")
 @RequiredArgsConstructor
 public class ReservationController {
-    public static final String RESERVATION_DELETE_SUCCESSFULLY = "Reservation delete successfully";
+    public static final String RESERVATION_DELETED_SUCCESSFULLY = "Reservation deleted successfully";
     private final ReservationService reservationService;
 
     @GetMapping(value = "/{id}")
@@ -59,6 +59,6 @@ public class ReservationController {
     @PreAuthorize("hasRole('STAFF') or @userSecurity.isLoggedUserAbleToDeleteChosenReservation(authentication, #id)")
     public ResponseEntity<MessageResponse> deleteReservation(@PathVariable Long id) {
         reservationService.deleteById(id);
-        return ResponseEntity.ok(new MessageResponse(RESERVATION_DELETE_SUCCESSFULLY));
+        return ResponseEntity.ok(new MessageResponse(RESERVATION_DELETED_SUCCESSFULLY));
     }
 }
