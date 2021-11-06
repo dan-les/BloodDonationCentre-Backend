@@ -4,7 +4,7 @@ import com.rootuss.BloodDonationCentre.exception.BloodDonationCentreException;
 import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
-import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponseDto;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
 import com.rootuss.BloodDonationCentre.users.account.UserDetailsImpl;
 import com.rootuss.BloodDonationCentre.users.account.UserDetailsRepository;
@@ -40,14 +40,14 @@ public class AuthServiceImpl implements AuthService {
     private final UserDetailsRepository userDetailsRepository;
 
     @Override
-    public JwtSignInResponse signInUser(LoginRequestDto loginRequest, Authentication authentication) {
+    public JwtSignInResponseDto signInUser(LoginRequestDto loginRequest, Authentication authentication) {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = retrieveUser(userDetails);
         String jwtToken = jwtUtils.generateJwtToken(authentication);
         RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
         List<String> roles = retrieveRoles(userDetails.getAuthorities());
 
-        return JwtSignInResponse.builder()
+        return JwtSignInResponseDto.builder()
                 .token(jwtToken)
                 .refreshToken(refreshToken.getToken())
                 .id(user.getId())

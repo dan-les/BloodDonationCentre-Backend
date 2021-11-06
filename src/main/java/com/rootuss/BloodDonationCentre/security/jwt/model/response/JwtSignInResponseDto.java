@@ -7,7 +7,7 @@ import java.util.List;
 
 @AllArgsConstructor
 @Builder
-public class JwtSignInResponse {
+public class JwtSignInResponseDto {
     private String token;
     private static String type = "Bearer";
     private String refreshToken;

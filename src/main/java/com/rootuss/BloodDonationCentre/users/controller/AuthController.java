@@ -7,7 +7,7 @@ import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
 import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequest;
 import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRequest;
-import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponseDto;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequestDto;
@@ -41,8 +41,8 @@ public class AuthController {
     public ResponseEntity<?> signInUser(@Valid @RequestBody LoginRequestDto loginRequest) {
         Authentication authentication = retrieveAuthentication(loginRequest);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        JwtSignInResponse jwtSignInResponse = authService.signInUser(loginRequest, authentication);
-        return ResponseEntity.ok(jwtSignInResponse);
+        JwtSignInResponseDto jwtSignInResponseDto = authService.signInUser(loginRequest, authentication);
+        return ResponseEntity.ok(jwtSignInResponseDto);
     }
 
     @PostMapping("/logout")
