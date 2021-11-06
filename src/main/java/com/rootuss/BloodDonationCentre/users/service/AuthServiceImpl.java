@@ -44,7 +44,7 @@ public class AuthServiceImpl implements AuthService {
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = retrieveUser(userDetails);
         String jwtToken = jwtUtils.generateJwtToken(authentication);
-        RefreshToken refreshToken = refreshTokenService.createRefreshToken(userDetails.getId());
+        RefreshToken refreshToken = refreshTokenService.createRefreshToken(user);
         List<String> roles = retrieveRoles(userDetails.getAuthorities());
 
         return JwtSignInResponseDto.builder()
