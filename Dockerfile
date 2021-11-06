@@ -1,25 +1,16 @@
-FROM openjdk:11.0-jre-slim
-ADD target/BloodDonationCentre-0.0.5-SNAPSHOT.jar .
-EXPOSE 20103
-CMD java -jar BloodDonationCentre-0.0.5-SNAPSHOT.jar
+FROM maven:3.8.3-jdk-11
+WORKDIR /app
+COPY src /app/src
+COPY pom.xml /app
+RUN mvn -f /app/pom.xml clean package
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "target/BloodDonationCentre-0.0.5-SNAPSHOT.jar"]
+
 
 #  --- LOCAL ---
-# 1. mvn clean compile package
-#    [to generate .jar file]
-# 2. docker build -f Dockerfile -t spring-bdc:v5 .
-# 3. docker images
-# 4. docker save -o d:/spring-bdc-v5.tar spring-bdc:v5
+# 1. docker build -f Dockerfile -t spring-bdc:v5 .
+# 2. docker images
+# 3. docker save -o d:/spring-bdc-v5.tar spring-bdc:v5
 #  --- VPN ---
-# 5. docker load -i ./spring-bdc-v5.tar
-# 6. docker run -itd -p 20103:8080 spring-bdc:v5
-
-
-# ---------------------------------------------------------------------
-#     docker run -p 20103:8080 95c
-#     95c - first 3 chars of IMAGE ID
-#     eq.
-#     REPOSITORY   TAG         IMAGE ID        CREATED         SIZE
-#     bcd-f        v1          95cfa2254944    4 hours ago     625MB
-#
-#     docker load -i d:/image.tar
-# ---------------------------------------------------------------------
+# 3. docker load -i ./spring-bdc-v5.tar
+# 5. docker run -itd -p 20103:8080 spring-bdc:v5
