@@ -1,11 +1,13 @@
 package com.rootuss.BloodDonationCentre.security.jwt.model.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.util.List;
 
 @AllArgsConstructor
-public class JwtResponse {
+@Builder
+public class JwtSignInResponse {
     private String token;
     private static String type = "Bearer";
     private String refreshToken;
