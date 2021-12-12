@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -25,7 +26,7 @@ public class RecipientController {
 
     @PreAuthorize("hasRole('STAFF')")
     @PostMapping
-    public Recipient addRecipient(@RequestBody RecipientRequestDto recipientRequestDto) {
+    public Recipient addRecipient(@Valid @RequestBody RecipientRequestDto recipientRequestDto) {
         return recipientService.addRecipient(recipientRequestDto);
     }
 }

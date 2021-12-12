@@ -3,13 +3,13 @@ package com.rootuss.BloodDonationCentre.users.model;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
 public class LoginRequestDto {
-    @NotBlank
+    @NotNull(message = "Username can not be blank")
     private String username;
-    @NotBlank
+    @NotNull(message = "Password can not be blank")
     private String password;
 }

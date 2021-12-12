@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -38,13 +39,13 @@ public class DonationController {
 
     @PreAuthorize("hasRole('STAFF')")
     @PostMapping
-    public DonationResponseDto addDonation(@RequestBody DonationRequestDto donationRequestDto) {
+    public DonationResponseDto addDonation(@Valid @RequestBody DonationRequestDto donationRequestDto) {
         return donationService.addDonation(donationRequestDto);
     }
 
     @PreAuthorize("hasRole('STAFF')")
     @PatchMapping
-    public ResponseEntity<MessageResponse> patchDonation(@RequestBody RecipientChangeRequestDto recipientChangeRequestDto) {
+    public ResponseEntity<MessageResponse> patchDonation(@Valid @RequestBody RecipientChangeRequestDto recipientChangeRequestDto) {
         return donationService.patchDonation(recipientChangeRequestDto);
     }
 

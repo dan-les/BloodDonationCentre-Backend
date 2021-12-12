@@ -51,7 +51,7 @@ public class ReservationController {
 
     @PostMapping
     @PreAuthorize("hasRole('STAFF') or hasRole('USER')")
-    public ReservationResponseDto addReservation(@RequestBody @Valid ReservationRequestDto reservationRequestDto) {
+    public ReservationResponseDto addReservation(@Valid @RequestBody ReservationRequestDto reservationRequestDto) {
         return reservationService.addReservation(reservationRequestDto);
     }
 

@@ -5,8 +5,8 @@ import com.rootuss.BloodDonationCentre.exception.Error;
 import com.rootuss.BloodDonationCentre.exception.TokenRefreshException;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
-import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequest;
-import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRequest;
+import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequestDto;
+import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRequestDto;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponseDto;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
@@ -46,13 +46,13 @@ public class AuthController {
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequest logOutRequest) {
+    public ResponseEntity<?> logoutUser(@Valid @RequestBody LogOutRequestDto logOutRequest) {
         refreshTokenService.deleteByUserId(logOutRequest.getUserId());
         return ResponseEntity.ok(new MessageResponse(LOG_OUT_SUCCESSFUL));
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequest request) {
+    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequestDto request) {
         String requestRefreshToken = request.getRefreshToken();
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
@@ -75,5 +75,4 @@ public class AuthController {
         return authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
     }
-
 }
