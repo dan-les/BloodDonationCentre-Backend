@@ -46,5 +46,4 @@ public class DonorController {
                                      @Valid @RequestBody DonorRequestDto donorRequestDto) {
         return donorService.putDonor(id, donorRequestDto);
     }
-
 }

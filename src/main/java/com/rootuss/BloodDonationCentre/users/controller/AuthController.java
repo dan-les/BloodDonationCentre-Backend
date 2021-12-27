@@ -6,9 +6,9 @@ import com.rootuss.BloodDonationCentre.exception.TokenRefreshException;
 import com.rootuss.BloodDonationCentre.security.jwt.JwtUtils;
 import com.rootuss.BloodDonationCentre.security.jwt.model.RefreshToken;
 import com.rootuss.BloodDonationCentre.security.jwt.model.request.LogOutRequestDto;
-import com.rootuss.BloodDonationCentre.security.jwt.model.request.TokenRefreshRequestDto;
+import com.rootuss.BloodDonationCentre.security.jwt.model.request.RefreshTokenRequestDto;
 import com.rootuss.BloodDonationCentre.security.jwt.model.response.JwtSignInResponseDto;
-import com.rootuss.BloodDonationCentre.security.jwt.model.response.TokenRefreshResponse;
+import com.rootuss.BloodDonationCentre.security.jwt.model.response.RefreshTokenResponseDto;
 import com.rootuss.BloodDonationCentre.security.services.RefreshTokenService;
 import com.rootuss.BloodDonationCentre.users.model.LoginRequestDto;
 import com.rootuss.BloodDonationCentre.users.model.SignupRequestDto;
@@ -52,14 +52,14 @@ public class AuthController {
     }
 
     @PostMapping("/refresh-token")
-    public ResponseEntity<?> refreshtoken(@Valid @RequestBody TokenRefreshRequestDto request) {
+    public ResponseEntity<?> refreshtoken(@Valid @RequestBody RefreshTokenRequestDto request) {
         String requestRefreshToken = request.getRefreshToken();
         return refreshTokenService.findByToken(requestRefreshToken)
                 .map(refreshTokenService::verifyExpiration)
                 .map(RefreshToken::getUser)
                 .map(user -> {
                     String token = jwtUtils.generateTokenFromUsername(user.getUserDetails().getUsername());
-                    return ResponseEntity.ok(new TokenRefreshResponse(token, requestRefreshToken));
+                    return ResponseEntity.ok(new RefreshTokenResponseDto(token, requestRefreshToken));
                 })
                 .orElseThrow(() -> new TokenRefreshException(requestRefreshToken,
                         Error.REFRESH_TOKEN_IS_NOT_IN_DATABASE.getMessage()));

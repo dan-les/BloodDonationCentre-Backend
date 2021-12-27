@@ -7,7 +7,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
-public class TokenRefreshRequestDto {
+public class RefreshTokenRequestDto {
   @NotNull(message = "RefreshToken can not be blank")
   private String refreshToken;
 }

@@ -6,6 +6,7 @@ import com.rootuss.BloodDonationCentre.users.model.SignupRequestDto;
 import org.springframework.security.core.Authentication;
 
 public interface AuthService {
+
     JwtSignInResponseDto signInUser(LoginRequestDto loginRequest, Authentication authentication);
 
     void registerUser(SignupRequestDto signUpRequest);

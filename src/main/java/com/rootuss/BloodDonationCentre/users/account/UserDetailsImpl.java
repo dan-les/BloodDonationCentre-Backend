@@ -9,7 +9,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.*;
 
@@ -23,10 +23,10 @@ public class UserDetailsImpl implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+    @NotNull(message = "Username can not be blank")
     @Size(max = 20)
     private String username;
-    @NotBlank
+    @NotNull(message = "Password can not be blank")
     @Size(max = 120)
     private String password;
     @Column(name = "account_non_expired")

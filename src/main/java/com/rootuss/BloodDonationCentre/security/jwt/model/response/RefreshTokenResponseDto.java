@@ -8,7 +8,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TokenRefreshResponse {
+public class RefreshTokenResponseDto {
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)

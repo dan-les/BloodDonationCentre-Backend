@@ -6,7 +6,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
@@ -20,7 +20,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+    @NotNull(message = "Email can not be blank")
     @Size(max = 50)
     @Email
     private String email;
