@@ -2,7 +2,7 @@
 
 The repository contains a Spring Boot REST API application for managing the blood centre.
 
-## Technologies:
+## Technologies
 
 Core technologies used in the project:
 
@@ -13,7 +13,7 @@ Core technologies used in the project:
 * Project Lombok
 * MySQL DB
 
-## Key application features:
+## Key application features
 
 * User registration and authentication with JWT
 * Logged donor can:
@@ -28,6 +28,6 @@ Core technologies used in the project:
 * Admin can manage all employees in donation centre
 * The system takes care of providing the appropriate interval between donations
 
-## Swagger API:
+## Swagger API
 
 ![Swagger-screenshot1](swagger/swagger_api.png)
